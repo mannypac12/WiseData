@@ -13,8 +13,15 @@ import xlwings as xl
 
 ## 변수: Sheet명 / 바꿀 컬럼 / Date
 
-
 class Fileset:
+
+    """
+    매크로지정 (해당 엑셀파일 모듈 내)
+    Public Sub Refresh_NewButton()
+        '시트명.버튼위치.Hyperlinks(1).Follow
+        Sheets(시트명).Range("A1").Hyperlinks(1).Follow
+    End Sub
+    """    
 
     ## 파일경로 / ## 파일명
     def __init__(self, file, path="D:\WiseData\Data"):
@@ -52,13 +59,7 @@ a.update(20170101, 20170110)
 
 # class FileSet:
 
-#     """
-#     매크로지정 (해당 엑셀파일 모듈 내)
-#     Public Sub Refresh_NewButton()
-#         '시트명.버튼위치.Hyperlinks(1).Follow
-#         Sheet1.Range("A1").Hyperlinks(1).Follow
-#     End Sub
-#     """
+
 
 #     def __init__(self, path=f"""D:\WiseData\Data""", file_name="test.xlsm"):
         
