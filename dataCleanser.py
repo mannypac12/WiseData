@@ -34,7 +34,7 @@ class FinancialAnlytics(DataOpener):
 
         return super().TS_dataopener(sheetname).pct_change(num)
 
-class PriceAnalytics(DataOpener):
+class PriceDataCleanser(DataOpener):
 
     # def __init__(self, file, *kwargs):
     #     return super().__init__(file, *kwargs)
@@ -181,7 +181,63 @@ class PriceAnalytics(DataOpener):
 
         return {'golden': gd_cross, 'death': dth_cross}
 
-##
+    def true_range(self):
+
+        org_dt = self.olhc()
+
+        trm_1 = org_dt["수정주가"].sub(org_dt["수정저가"])
+        trm_2 = org_dt["수정고가"].sub(org_dt["수정주가"].shift(1)).abs()
+        trm_3 = org_dt["수정저가"].sub(org_dt["수정주가"].shift(1)).abs()        
+
+        cols = org_dt["수정주가"].columns
+        idx = org_dt["수정주가"].index
+
+        ans_dt = pd.DataFrame(index = idx, columns = cols, data=np.zeros((len(idx), len(cols))))
+
+        for col in cols:
+            ans_dt[col] = pd.concat([trm_1[col], trm_2[col], trm_3[col]], axis=1).max(axis=1)
+
+        return ans_dt
+
+    def avg_tr_range(self, windows=14):
+
+        return self.true_range().rolling(windows).mean()
+
+    def avg_tr_diff(self, windows=14):
+
+        return self.avg_tr_range(windows).pct_change()
+
+class PriceAnalytics(PriceDataCleanser):
+
+    def __init__(self, file, dir='Data'):
+        return super().__init__(file, dir=dir)
+
+    ## 차후 시스템 개발 후 덧붙일 것 
+        
+    ## 상승세 Using MVA
+
+    ## 50일선 > 120일선
+    ## MVA DIFF for short is bigger tha
+        
+        
+        
+
+        
+
+        ## Use High / Low / Close
+
+        ## Method One   
+            ## High - Low
+        ## Method Two
+        ## Method Three
+
+        ## Choose the max value of three of them
+
+
+    
+
+## 이격 공식 / 다른 클래스로 해서
+## m + 2*sd or - 2*sd 공식화하긔
 
     ## 이격(%로 표시하기)
     ## 이격 공식: 
@@ -190,9 +246,10 @@ class PriceAnalytics(DataOpener):
 
 objOne = PriceAnalytics(file="price.xlsm")        
 # test_one = objOne.brc_chan_breakout()
-test_two = objOne.downtail_size()
+test_two = objOne.stuff()
 print(test_two)
 # print(test_two.sum())
+
 
 
 
