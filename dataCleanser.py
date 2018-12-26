@@ -4,6 +4,9 @@
 
 import pandas as pd
 import numpy as np
+import matplotlib.pyplot as plt
+
+## DataOpener(Stuff): olhc Opener
 
 class DataOpener:
 
@@ -22,6 +25,15 @@ class DataOpener:
 
         return dt
 
+    def olhc(self, sheetnames=["수정시가", "수정고가", "수정주가", "수정저가"], num=1):
+        
+        prices = {}
+
+        for sheet_nm in sheetnames:
+            prices[sheet_nm] = self.TS_dataopener(sheet_nm)
+        
+        return prices
+
 class FinancialAnlytics(DataOpener):
 
     # def __init__(self, file, *kwargs):
@@ -39,18 +51,18 @@ class PriceDataCleanser(DataOpener):
     # def __init__(self, file, *kwargs):
     #     return super().__init__(file, *kwargs)
 
-    def olhc(self, sheetnames=["수정시가", "수정고가", "수정주가", "수정저가"], num=1):
+    # def olhc(self, sheetnames=["수정시가", "수정고가", "수정주가", "수정저가"], num=1):
         
-        prices = {}
+    #     prices = {}
 
-        for sheet_nm in sheetnames:
-            prices[sheet_nm] = super().TS_dataopener(sheet_nm)
+    #     for sheet_nm in sheetnames:
+    #         prices[sheet_nm] = super().TS_dataopener(sheet_nm)
         
-        return prices
+    #     return prices
 
     def daily_price_rt(self):
 
-        return self.olhc()["수정주가"].pct_change()
+        return (self.olhc()["수정주가"].pct_change()).sub(-1)
 
     def candle(self):
 
@@ -207,10 +219,48 @@ class PriceDataCleanser(DataOpener):
 
         return self.avg_tr_range(windows).pct_change()
 
-class PriceAnalytics(PriceDataCleanser):
+    def relative_strength(self, comp_rt= None, windows=60):
 
-    def __init__(self, file, dir='Data'):
-        return super().__init__(file, dir=dir)
+        ## comp_rt should be (1+r) like that
+
+        ## Relative Strength
+        ## 지수 등의 Return을 불러와야 함
+        ## Rolling: 60일 / 90일        
+
+        product = lambda x: np.prod(x)
+
+        cum_rt = (self.daily_price_rt()).rolling(windows).apply(product, raw=True)
+        cum_comp_rt = comp_rt.rolling(windows).apply(product, raw=True)
+
+        return cum_rt.div(cum_comp_rt).div(1/100)
+
+class ChartGrid(PriceDataCleanser):
+
+    ## GraphQL이 필요해...
+    def stock_data(self, stock):
+
+        ord_dt = self.olhc()
+        cls_prc = ord_dt['수정주가'][stock]
+        low_prc = ord_dt['수정저가'][stock]
+        high_prc = ord_dt['수정고가'][stock]
+        opn_prc = ord_dt['수정시가'][stock]
+
+        return cls_prc, low_prc, high_prc, opn_prc
+        ## 도망가자 큨큨
+
+    
+
+
+
+
+## Stock Chart
+
+## Bar Chart
+## 
+
+
+
+
 
     ## 차후 시스템 개발 후 덧붙일 것 
         
@@ -244,9 +294,9 @@ class PriceAnalytics(PriceDataCleanser):
 
 
 
-objOne = PriceAnalytics(file="price.xlsm")        
+objOne = ChartGrid(file="price.xlsm")        
 # test_one = objOne.brc_chan_breakout()
-test_two = objOne.stuff()
+test_two = objOne.data
 print(test_two)
 # print(test_two.sum())
 
