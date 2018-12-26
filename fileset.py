@@ -53,8 +53,8 @@ class Fileset:
         
         wb.save(self.fullpath)
 
-a = Fileset("test.xlsm")
-a.update(20170101, 20170110)
+a = Fileset("price.xlsm")
+a.update(20170101, 20181221)
 
 
 # class FileSet:
