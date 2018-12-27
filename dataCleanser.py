@@ -294,9 +294,9 @@ class ChartGrid(PriceDataCleanser):
 
 
 
-objOne = ChartGrid(file="price.xlsm")        
+objOne = PriceDataCleanser(file="Index.xlsm")        
 # test_one = objOne.brc_chan_breakout()
-test_two = objOne.data
+test_two = objOne.brc_chan_breakout()
 print(test_two)
 # print(test_two.sum())
 
