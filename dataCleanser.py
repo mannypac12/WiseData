@@ -27,12 +27,16 @@ class DataOpener:
 
     def olhc(self, sheetnames=["수정시가", "수정고가", "수정주가", "수정저가"], num=1):
         
+        ## 0 to NaN
+
+        zerotonan = lambda x: np.nan if x == 0 else x
+
         prices = {}
 
         for sheet_nm in sheetnames:
-            prices[sheet_nm] = self.TS_dataopener(sheet_nm)
+            prices[sheet_nm] = (self.TS_dataopener(sheet_nm)).applymap(zerotonan).dropna(axis=0, how='all')
         
-        return prices
+        return prices['수정시가'], prices['수정고가'], prices['수정주가'], prices['수정저가'] 
 
 class FinancialAnlytics(DataOpener):
 
@@ -48,6 +52,11 @@ class FinancialAnlytics(DataOpener):
 
 class PriceDataCleanser(DataOpener):
 
+    def __init__(self, file, dir='Data'):
+        
+        super().__init__(file, dir=dir)
+        self.open, self.high, self.close, self.low = super().olhc()
+
     # def __init__(self, file, *kwargs):
     #     return super().__init__(file, *kwargs)
 
@@ -62,14 +71,12 @@ class PriceDataCleanser(DataOpener):
 
     def daily_price_rt(self):
 
-        return (self.olhc()["수정주가"].pct_change()).sub(-1)
+        return ((self.close).pct_change()).sub(-1)
 
     def candle(self):
 
-        org_dt = self.olhc()
-
-        nan_dt = pd.isnull(org_dt["수정주가"])
-        candle_dt = org_dt["수정주가"] >= org_dt["수정시가"]
+        nan_dt = pd.isnull(self.close)
+        candle_dt = self.close >= self.open 
         candle_dt[nan_dt] = np.nan
         
         def convertToBool(x):
@@ -85,7 +92,7 @@ class PriceDataCleanser(DataOpener):
 
     def candle_prep_function(self):
 
-        org_dt = self.olhc()
+        org_dt = self.data
         candle = self.candle()
 
         return org_dt, candle
@@ -95,10 +102,10 @@ class PriceDataCleanser(DataOpener):
         ## If 양봉 / 수정주가.div(수정시가)
         ## elif 음봉 / 수정시가.div(수정주가)                
 
-        org_dt, candle = self.candle_prep_function()
+        candle = self.candle()
         
-        ans_dt = org_dt['수정주가'].div(org_dt['수정시가'])
-        ans_dt[candle == False] = org_dt['수정시가'].div(org_dt['수정주가'])
+        ans_dt = (self.close).div(self.open)
+        ans_dt[candle == False] = (self.open).div(self.close)
 
         return ans_dt
 
@@ -107,11 +114,10 @@ class PriceDataCleanser(DataOpener):
         ## Uptail 의 크기
         ## If 양봉 / 수정고가.div(수정주가)
         ## else 음봉 / 수정고가.div(수정시가)        
+        candle = self.candle()
 
-        org_dt, candle = self.candle_prep_function()
-
-        ans_dt = org_dt['수정고가'].div(org_dt['수정주가'])
-        ans_dt[candle == False] = org_dt['수정고가'].div(org_dt['수정시가'])
+        ans_dt = (self.high).div(self.close)
+        ans_dt[candle == False] = (self.high).div(self.open)
 
         return ans_dt
 
@@ -123,51 +129,45 @@ class PriceDataCleanser(DataOpener):
         ## If 양봉 / 수정시가.div(수정저가)
         ## else 음봉 / 수정주가.div(수정시가)        
 
-        org_dt, candle = self.candle_prep_function()
-
-        ans_dt = org_dt['수정시가'].div(org_dt['수정저가'])
-        ans_dt[candle == False] = org_dt['수정주가'].div(org_dt['수정저가'])
-
-        return ans_dt        
+        ans_dt = (self.open).div(self.low)
+        ans_dt[self.candle() == False] = (self.close).div(self.open)
 
     def SMPmovAvg(self, windows=5):
 
         ## 모든 이동평균선 분석은 Simple Moving Average 로 대신함
 
-        return self.olhc()["수정주가"].rolling(windows).mean()
+        return self.close.rolling(windows).mean()
 
     def EXPmovAvg(self, span=5):
 
-        return self.olhc()["수정주가"].ewma(span).mean()        
-    
-    def channel_breakout(self, windows=20):
-        org_dt = self.olhc()["수정주가"]
+        return (self.close).ewm(span).mean()        
+
+    def chan_break_out(self, windows):
         
-        return org_dt == org_dt.rolling(windows).max()
+        return self.close == (self.close).rolling(windows).max()
 
     def adj_price(self):
 
         ## if candle is red then 종가
         ## if candle is blue then 시가
 
-        org_dt = self.olhc()
         candle  = self.candle()
-
-        cls_org_dt = org_dt['수정주가']
-        opn_org_dt = org_dt['수정시가']
-        
-        cls_org_dt[candle == False] = opn_org_dt
+        cls_org_dt = self.close
+        cls_org_dt[candle == False] = self.open
 
         return cls_org_dt
         
     def brc_chan_breakout(self, windows=20):
 
         ## 음봉은 시가가 우선
-        cls_price = self.olhc()['수정주가']
-        brk_price = self.adj_price().rolling(windows).max()
+        
+        # cls_price = self.data['수정주가']
+        # brk_price = self.adj_price().rolling(windows).max()
+        #          'brk_price_signal': cls_price == brk_price }
 
-        return { 'brk_price': brk_price, 
-                 'brk_price_signal': cls_price == brk_price }
+        return {'brk_price': (self.adj_price()).rolling(windows).max(), 
+                'brk_price_signal': self.adj_price() == (self.adj_price()).rolling(windows).max()
+        }
     
     def MVA_divergence(self, windows=5):
         ## 5일 대비 이격
@@ -195,14 +195,13 @@ class PriceDataCleanser(DataOpener):
 
     def true_range(self):
 
-        org_dt = self.olhc()
 
-        trm_1 = org_dt["수정주가"].sub(org_dt["수정저가"])
-        trm_2 = org_dt["수정고가"].sub(org_dt["수정주가"].shift(1)).abs()
-        trm_3 = org_dt["수정저가"].sub(org_dt["수정주가"].shift(1)).abs()        
+        trm_1 = (self.close).sub(self.low)
+        trm_2 = (self.high).sub(self.close.shift(1)).abs()
+        trm_3 = (self.low).sub(self.close.shift(1)).abs()        
 
-        cols = org_dt["수정주가"].columns
-        idx = org_dt["수정주가"].index
+        cols = self.close.columns
+        idx = self.close.index
 
         ans_dt = pd.DataFrame(index = idx, columns = cols, data=np.zeros((len(idx), len(cols))))
 
@@ -234,18 +233,78 @@ class PriceDataCleanser(DataOpener):
 
         return cum_rt.div(cum_comp_rt).div(1/100)
 
-class ChartGrid(PriceDataCleanser):
+"""
+    Class DualMomentum
 
-    ## GraphQL이 필요해...
-    def stock_data(self, stock):
+        ## Inherit From PriceDataAnalysis
+        ## Common Dual Momentum
+            ## Default Ten Choose
+            ## But if lower than Ten stuff's return are lower than zero then only then the number choose
+        ## Basic Dual Momentum
+            ## 30 day return / 90 day holding: Can be changed Anytime soon
+        ## Elegance Dual Momentum
+            ## Add Some technical Indicator / 
+                ## Holding Period can vary according to the indicators
+"""
 
-        ord_dt = self.olhc()
-        cls_prc = ord_dt['수정주가'][stock]
-        low_prc = ord_dt['수정저가'][stock]
-        high_prc = ord_dt['수정고가'][stock]
-        opn_prc = ord_dt['수정시가'][stock]
+class BasicDualMomentum(PriceDataCleanser):
 
-        return cls_prc, low_prc, high_prc, opn_prc
+    def __init__(self, file, dir='Data'):
+        super().__init__(file, dir=dir)
+        self.ret = self.daily_price_rt()
+
+    def rolling_return(self, windows=30):
+
+        return self.ret.rolling(windows).apply(lambda x: np.prod(x))
+
+    ## 
+
+    def morethanzero(self, windows=30):
+
+        ## 절대 수익률: More than 0
+        return (self.rolling_return(windows)).applymap(lambda x: True if x > 1 else False)
+
+    def rank(self, windows=30):
+
+        
+
+    ## 순위: 
+        ## 
+
+        
+
+
+    ## 순위
+    ## 
+
+
+            
+
+
+
+
+
+
+
+
+    
+
+    
+
+    
+
+# class ChartGrid(PriceDataCleanser):
+
+#     ## GraphQL이 필요해...
+#     def stock_data(self, stock):
+
+#         ord_dt = self.data
+#         cls_prc = ord_dt['수정주가'][stock]
+#         low_prc = ord_dt['수정저가'][stock]
+#         high_prc = ord_dt['수정고가'][stock]
+#         opn_prc = ord_dt['수정시가'][stock]
+
+#         return cls_prc, low_prc, high_prc, opn_prc
         ## 도망가자 큨큨
 
     
@@ -292,11 +351,9 @@ class ChartGrid(PriceDataCleanser):
     ## 이격(%로 표시하기)
     ## 이격 공식: 
 
-
-
-objOne = PriceDataCleanser(file="Index.xlsm")        
+objOne = BasicDualMomentum(file="US_ETF_AND_SORTS.xlsx")        
 # test_one = objOne.brc_chan_breakout()
-test_two = objOne.brc_chan_breakout()
+test_two = objOne.morethanzero()
 print(test_two)
 # print(test_two.sum())
 
