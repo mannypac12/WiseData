@@ -170,6 +170,7 @@ class PriceDataCleanser(DataOpener):
         }
     
     def MVA_divergence(self, windows=5):
+
         ## 5일 대비 이격
         adj_price = self.adj_price()
         comp_mva = self.SMPmovAvg(windows)
@@ -255,9 +256,7 @@ class BasicDualMomentum(PriceDataCleanser):
 
     def rolling_return(self, windows=30):
 
-        return self.ret.rolling(windows).apply(lambda x: np.prod(x))
-
-    ## 
+        return (self.ret.rolling(windows).apply(lambda x: np.prod(x), raw=True)).dropna(how='all')
 
     def morethanzero(self, windows=30):
 
@@ -266,84 +265,91 @@ class BasicDualMomentum(PriceDataCleanser):
 
     def rank(self, windows=30):
 
+        return (self.rolling_return(windows)).rank(axis = 1, ascending=False)
+
+    def DualSecurity(self, windows=30):
+
+        tr = self.morethanzero(windows)
         
+        return self.rank(windows)[tr]
 
-    ## 순위: 
-        ## 
+    def SelectableSecurity(self, windows=30):
 
+        ## Selectable Security
         
+        dt = self.DualSecurity(windows=30)
+        idx = dt.index
+        invest = {}
 
+        for date in idx: 
+            invest[date] = (dt.loc[date].dropna()).index
 
-    ## 순위
-    ## 
+        return invest
 
+    def compositReturn(self, windows=30, holding_date=60, start=0, sec=10):
 
+        select_sec = self.SelectableSecurity(windows)
+        
+        ## date keys
+
+        select_sec_date = list(select_sec.keys())
+        chs_date = []
+        ansDt = pd.Series()
+
+        for i in range(start, len(select_sec_date), holding_date):
+
+            chs_date.append(select_sec_date[i])
+
+        for date in chs_date:
+
+            columns = select_sec[date][:sec]
             
+            ## The stuff is Equal Weight The code should be modified if other allocation method required            
+            num_cols = len(columns)
+            dt = ((self.ret.loc[date:, columns].iloc[:holding_date]).div(num_cols)).sum(axis=1)
+            ansDt = pd.concat([ansDt, dt])
+            
+        return ansDt
 
+"""
+백테스트 전용 클래스 만들어보기
+"""    
 
-
-
-
-
-
-
+class PfAnalysis:
     
+    def __init__(self, data):
 
+        self.data = data
+        # self.index = data.index
+
+    def cumReturn(self):
+
+        return self.data.cumprod()
+
+    ## Volatility
+
+    def rolling_vol(self, windows=252):
+
+        return (self.data.rolling(window=windows).std(ddof=1)).div(1/np.sqrt(windows))
+
+    ## drawDown
+    def drawDown(self, windows=252):
+
+        roll_max = self.data.rolling(window=windows, min_periods=1).max()
+        
+        return (self.data).div(roll_max).sub(1)
+
+    def maxDrawDown(self, windows=252):
+
+        return self.drawDown(windows).min()
     
+      
 
-    
-
-# class ChartGrid(PriceDataCleanser):
-
-#     ## GraphQL이 필요해...
-#     def stock_data(self, stock):
-
-#         ord_dt = self.data
-#         cls_prc = ord_dt['수정주가'][stock]
-#         low_prc = ord_dt['수정저가'][stock]
-#         high_prc = ord_dt['수정고가'][stock]
-#         opn_prc = ord_dt['수정시가'][stock]
-
-#         return cls_prc, low_prc, high_prc, opn_prc
-        ## 도망가자 큨큨
-
-    
+    ## Composit Return 
+    ## Maximum DrawDown
+    ##
 
 
-
-
-## Stock Chart
-
-## Bar Chart
-## 
-
-
-
-
-
-    ## 차후 시스템 개발 후 덧붙일 것 
-        
-    ## 상승세 Using MVA
-
-    ## 50일선 > 120일선
-    ## MVA DIFF for short is bigger tha
-        
-        
-        
-
-        
-
-        ## Use High / Low / Close
-
-        ## Method One   
-            ## High - Low
-        ## Method Two
-        ## Method Three
-
-        ## Choose the max value of three of them
-
-
-    
 
 ## 이격 공식 / 다른 클래스로 해서
 ## m + 2*sd or - 2*sd 공식화하긔
@@ -351,10 +357,20 @@ class BasicDualMomentum(PriceDataCleanser):
     ## 이격(%로 표시하기)
     ## 이격 공식: 
 
-objOne = BasicDualMomentum(file="US_ETF_AND_SORTS.xlsx")        
-# test_one = objOne.brc_chan_breakout()
-test_two = objOne.morethanzero()
-print(test_two)
+
+# objOne = BasicDualMomentum(file="US_ETF_AND_SORTS.xlsx")   
+# # test_one = objOne.brc_chan_breakout()
+# test_two = objOne.compositReturn(windows=30, holding_date=90, start=0, sec=10)
+# test_two_1 = objOne.compositReturn(windows=30, holding_date=90, start=0, sec=9)
+# test_two_2 = objOne.compositReturn(windows=30, holding_date=90, start=0, sec=5)
+
+# for test in [test_two, test_two_1, test_two_2]:
+
+#     pf = PfAnalysis(test)
+#     pf.cumReturn().plot()
+
+
+
 # print(test_two.sum())
 
 
