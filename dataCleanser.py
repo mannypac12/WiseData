@@ -282,7 +282,12 @@ class BasicDualMomentum(PriceDataCleanser):
         invest = {}
 
         for date in idx: 
-            invest[date] = (dt.loc[date].dropna()).index
+            temp = dt.loc[date].dropna().reset_index()
+            temp.columns = ['sec_name', 'rank']
+            
+            ## 
+            invest[date] = list(temp.sort_values(by='rank', ascending=True)['sec_name'])
+            # invest[date] = list((dt.loc[date].dropna().sort_values(ascending=True)).index)
 
         return invest
 
@@ -358,7 +363,10 @@ class PfAnalysis:
     ## 이격 공식: 
 
 
-# objOne = BasicDualMomentum(file="US_ETF_AND_SORTS.xlsx")   
+# objOne = BasicDualMomentum(file="price.xlsm")   
+
+# objOne.SelectableSecurity()
+
 # # test_one = objOne.brc_chan_breakout()
 # test_two = objOne.compositReturn(windows=30, holding_date=90, start=0, sec=10)
 # test_two_1 = objOne.compositReturn(windows=30, holding_date=90, start=0, sec=9)
