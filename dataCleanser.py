@@ -38,6 +38,11 @@ class DataOpener:
         
         return prices['수정시가'], prices['수정고가'], prices['수정주가'], prices['수정저가'] 
 
+## Save File as csv in the assigned folder
+
+## Then Load the file as csv
+
+
 class FinancialAnlytics(DataOpener):
 
     # def __init__(self, file, *kwargs):
@@ -142,6 +147,16 @@ class PriceDataCleanser(DataOpener):
 
         return (self.close).ewm(span).mean()        
 
+    def mva_inline(self, shorter, longer, amount=5): 
+
+    ## 정배열 
+    ## 5일 이상 shorter window > Longer Window        
+        
+        shortmva = self.SMPmovAvg(shorter)
+        longmva = self.SMPmovAvg(longer)
+
+        return ((shortmva > longmva).rolling(amount).sum()) == amount
+        
     def chan_break_out(self, windows):
         
         return self.close == (self.close).rolling(windows).max()
@@ -233,6 +248,15 @@ class PriceDataCleanser(DataOpener):
         cum_comp_rt = comp_rt.rolling(windows).apply(product, raw=True)
 
         return cum_rt.div(cum_comp_rt).div(1/100)
+    
+    def pocketPivot(self, shorter=10, longer=50, filter=200, mt_cls=10, shift_amt=2):
+
+        cond_1 = self.mva_inline(shorter, longer).shift(shift_amt)
+        cond_2 = (self.candle() == True)
+        cond_3 = self.close > self.SMPmovAvg(mt_cls)
+        cond_3 = self.SMPmovAvg(mt_cls) > self.SMPmovAvg(filter)
+
+        return cond_1 & cond_2 & cond_3
 
 """
     Class DualMomentum
@@ -348,7 +372,6 @@ class PfAnalysis:
 
         return self.drawDown(windows).min()
     
-      
 
     ## Composit Return 
     ## Maximum DrawDown
@@ -363,25 +386,6 @@ class PfAnalysis:
     ## 이격 공식: 
 
 
-# objOne = BasicDualMomentum(file="price.xlsm")   
-
-# objOne.SelectableSecurity()
-
-# # test_one = objOne.brc_chan_breakout()
-# test_two = objOne.compositReturn(windows=30, holding_date=90, start=0, sec=10)
-# test_two_1 = objOne.compositReturn(windows=30, holding_date=90, start=0, sec=9)
-# test_two_2 = objOne.compositReturn(windows=30, holding_date=90, start=0, sec=5)
-
-# for test in [test_two, test_two_1, test_two_2]:
-
-#     pf = PfAnalysis(test)
-#     pf.cumReturn().plot()
-
-
-
-# print(test_two.sum())
-
-
-
-
+objOne = PriceDataCleanser(file="price.xlsm")   
+print(objOne.pocketPivot(10, 50,200,10,2).sum())
 
