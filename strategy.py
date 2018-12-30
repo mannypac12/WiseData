@@ -93,10 +93,11 @@ class PfAnalysis:
 
     ## drawDown
     def drawDown(self, windows=252):
-
-        roll_max = self.data.rolling(window=windows, min_periods=1).max()
         
-        return (self.data).div(roll_max).sub(1)
+        cum_rt = self.cumReturn()
+        roll_max = (cum_rt).rolling(window=windows, min_periods=1).max()
+        
+        return (cum_rt).div(roll_max).sub(1)
 
     def maxDrawDown(self, windows=252):
 
