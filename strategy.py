@@ -1,6 +1,7 @@
 import pandas as pd
 import numpy as np
 from FileOpener.analysis_prep import PriceDataCleanser 
+from FileOpener.DataOpener.DataOpener import StockInfoDataOpener
 
 class BasicDualMomentum(PriceDataCleanser):
 
@@ -102,3 +103,5 @@ class PfAnalysis:
     def maxDrawDown(self, windows=252):
 
         return self.drawDown(windows).min()
+
+StockInfoDataOpener('Delisted.xlsx').delist_to_csv(folder_name='Delisted')

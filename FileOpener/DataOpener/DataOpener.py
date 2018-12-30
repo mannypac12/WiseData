@@ -54,13 +54,47 @@ class FinancialDataOpener(GenDataOpener):
 
 class StockInfoDataOpener(GenDataOpener):
 
-    def Sect_Opener(self, sheetnames=['KSE', 'KDQ'], idx_name='Code', folder_name='Sector',skipr=12):
-    
-        zerotonan = lambda x: np.nan if x == 0 else x
+    zerotonan = lambda x: np.nan if x == 0 else x
+
+    def opener(self, sheetnames=['KSE', 'KDQ'], idx_name='Code',skipr=12):
+
+        file = {}
         
         for sheet_nm in sheetnames:
-            ((self.TS_dataopener(sheet_nm, idx_name, skipr)).applymap(zerotonan).dropna(axis=0, how='any')).to_csv(f'{self.dir}\{folder_name}\{sheet_nm}.csv')
-            print(f"{sheet_nm}.csv saved in {folder_name}")
+            file[sheet_nm] = (self.TS_dataopener(sheet_nm, idx_name, skipr)).applymap(StockInfoDataOpener.zerotonan).dropna(axis=0, how='any')
 
+        return file
+
+    def sect_to_csv(self, folder_name='Sector', **kwargs):
+
+        file = self.opener(**kwargs)
+
+        for key in file.keys():
+            file[key].to_csv(f'{self.dir}\{folder_name}\{key}.csv')
+
+    def delist_to_csv(self, folder_name='Delist', **kwargs):
+
+        file = self.opener(**kwargs)
+
+        for key in file.keys():
+            file[key]['상장폐지일']= pd.to_datetime(file[key]['상장폐지일'].astype(int).astype(str))
+            file[key].to_csv(f'{self.dir}\{folder_name}\{key}.csv')
+
+
+
+        
+    ## OpenFile
+
+        ## Sector 
+
+        ## Delisted
+
+        ##
     
+    # def Sect_Opener(self, sheetnames=['KSE', 'KDQ'], idx_name='Code', folder_name='Sector',skipr=12):
+        
+    #     for sheet_nm in sheetnames:
+    #         ((self.TS_dataopener(sheet_nm, idx_name, skipr)).applymap(StockInfoDataOpener.zerotonan).dropna(axis=0, how='any')).to_csv(f'{self.dir}\{folder_name}\{sheet_nm}.csv')
+    #         print(f"{sheet_nm}.csv saved in {folder_name}")
+
 

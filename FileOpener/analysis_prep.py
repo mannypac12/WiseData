@@ -308,15 +308,19 @@ class PfAnalysis:
 
 class Delisted:
 
-    pass
+    def __init__(self, data):
+
+        self.data=data
+    
+    
+
+
+
 
 ## 
 ## 레알 상폐: Return should be 0
 ## 합병주식: Return should be 1
 
-
-
-# print(StockInfoDataOpener('Sector.xlsx').Sect_Opener())
 
     ## Composit Return 
     ## Maximum DrawDown
