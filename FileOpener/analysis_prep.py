@@ -1,78 +1,18 @@
-## Pandas
-## 수익률
-## 
-
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from FileOpener.DataOpener.DataOpener import PriceDataOpener, StockInfoDataOpener, FinancialDataOpener
 
 ## DataOpener(Stuff): olhc Opener
 
-class DataOpener:
+## Data Opener General
 
-    def __init__(self, file, dir="Data"):
-
-        self.fullpath=f"{dir}\\{file}"
-        
-    def dataCols(self):
-
-        return pd.read_excel(self.fullpath, skiprows=8, nrows=1).columns[1:]
-    
-    def TS_dataopener(self, sheetname):
-
-        dt = pd.read_excel(self.fullpath,sheet_name=sheetname,skiprows=13).set_index('D A T E')
-        dt.columns = self.dataCols()
-
-        return dt
-
-    def olhc(self, sheetnames=["수정시가", "수정고가", "수정주가", "수정저가"], num=1):
-        
-        ## 0 to NaN
-
-        zerotonan = lambda x: np.nan if x == 0 else x
-
-        prices = {}
-
-        for sheet_nm in sheetnames:
-            prices[sheet_nm] = (self.TS_dataopener(sheet_nm)).applymap(zerotonan).dropna(axis=0, how='all')
-        
-        return prices['수정시가'], prices['수정고가'], prices['수정주가'], prices['수정저가'] 
-
-## Save File as csv in the assigned folder
-
-## Then Load the file as csv
-
-
-class FinancialAnlytics(DataOpener):
-
-    # def __init__(self, file, *kwargs):
-    #     return super().__init__(file, *kwargs)
-
-    def rate_change(self, sheetname, num=1):
-        
-        ## If num 1 => 분기별
-        ## If num 4 => 전년동기(분기)
-
-        return super().TS_dataopener(sheetname).pct_change(num)
-
-class PriceDataCleanser(DataOpener):
+class PriceDataCleanser(PriceDataOpener):
 
     def __init__(self, file, dir='Data'):
         
         super().__init__(file, dir=dir)
         self.open, self.high, self.close, self.low = super().olhc()
-
-    # def __init__(self, file, *kwargs):
-    #     return super().__init__(file, *kwargs)
-
-    # def olhc(self, sheetnames=["수정시가", "수정고가", "수정주가", "수정저가"], num=1):
-        
-    #     prices = {}
-
-    #     for sheet_nm in sheetnames:
-    #         prices[sheet_nm] = super().TS_dataopener(sheet_nm)
-        
-    #     return prices
 
     def daily_price_rt(self):
 
@@ -94,13 +34,6 @@ class PriceDataCleanser(DataOpener):
                 return np.nan
 
         return candle_dt.applymap(convertToBool)
-
-    def candle_prep_function(self):
-
-        org_dt = self.data
-        candle = self.candle()
-
-        return org_dt, candle
 
     def candle_size(self):
 
@@ -180,9 +113,10 @@ class PriceDataCleanser(DataOpener):
         # brk_price = self.adj_price().rolling(windows).max()
         #          'brk_price_signal': cls_price == brk_price }
 
-        return {'brk_price': (self.adj_price()).rolling(windows).max(), 
-                'brk_price_signal': self.adj_price() == (self.adj_price()).rolling(windows).max()
-        }
+        return {
+                    'brk_price': (self.adj_price()).rolling(windows).max(), 
+                    'brk_price_signal': self.adj_price() == (self.adj_price()).rolling(windows).max()
+               }
     
     def MVA_divergence(self, windows=5):
 
@@ -271,7 +205,7 @@ class PriceDataCleanser(DataOpener):
             ## Add Some technical Indicator / 
                 ## Holding Period can vary according to the indicators
 """
-
+    
 class BasicDualMomentum(PriceDataCleanser):
 
     def __init__(self, file, dir='Data'):
@@ -371,7 +305,18 @@ class PfAnalysis:
     def maxDrawDown(self, windows=252):
 
         return self.drawDown(windows).min()
-    
+
+class Delisted:
+
+    pass
+
+## 
+## 레알 상폐: Return should be 0
+## 합병주식: Return should be 1
+
+
+
+# print(StockInfoDataOpener('Sector.xlsx').Sect_Opener())
 
     ## Composit Return 
     ## Maximum DrawDown
@@ -386,6 +331,6 @@ class PfAnalysis:
     ## 이격 공식: 
 
 
-objOne = PriceDataCleanser(file="price.xlsm")   
-print(objOne.pocketPivot(10, 50,200,10,2).sum())
+# objOne = PriceDataCleanser(file="price.xlsm")   
+# print(objOne.pocketPivot(10, 50,200,10,2).sum())
 
