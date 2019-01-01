@@ -1,5 +1,5 @@
 import xlwings as xl
-
+import pandas as pd
 ## 1. 퀀티와이즈에서 받은 엑셀 파일 내 모듈에 매크로 함수를 작성한 다음 매크로 확장자로 저장
 ## 2. 퀀티와이즈에 접속되어있는지 확인 후 해당 파이선을 돌림(cmd / python fileset.py)
 ## 3. 변수: 일자는 yyyymmdd 형식으로 입력
@@ -23,8 +23,20 @@ class Fileset:
     End Sub
     """    
 
+    @staticmethod
+
+    def mkt_date_selector(st_date, ed_date):
+
+        ## 12월 1일부터 3월 1일까지
+        ## 3월 1일보다 작은 것
+
+        date_as = pd.date_range(st_date, ed_date)
+
+        return date_as[date_as < ed_date][0], date_as[date_as < ed_date][-1]
+
     ## 파일경로 / ## 파일명
-    def __init__(self, file, path="D:\WiseData\Data"):
+
+    def __init__(self, file, path="Data"):
 
         self.path=path
         self.file=file

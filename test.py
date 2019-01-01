@@ -1,7 +1,10 @@
 import pandas as pd
 import re
-from FileOpener.DataOpener.DataOpener import StockInfoDataOpener
+from FileOpener.Fileset import fileset as fl
+from FileOpener.DataOpener.DataOpener import MarketCapOpener
 
-StockInfoDataOpener('Delisted.xlsx').Sect_Opener(folder_name='Delisted')
+fl.Fileset('MarketCap1.xlsm')
+
+MarketCapOpener('MarketCap1.xlsx').market_cap_opener()
 
 ## 상장폐지일 => 날짜 / 
