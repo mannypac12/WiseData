@@ -19,9 +19,9 @@ class GenDataOpener:
         self.dir = dir
         self.fullpath=f"{self.dir}\\{file}"
         
-    def PF_dataCols(self, sheetname):
+    def PF_dataCols(self, sheetname, sk_rows=8):
 
-        return pd.read_excel(self.fullpath, sheet_name=sheetname,skiprows=8, nrows=1).columns[1:]
+        return pd.read_excel(self.fullpath, sheet_name=sheetname,skiprows=sk_rows, nrows=1).columns[1:]
 
     def TS_dataopener(self, sheetname, idx_name='D A T E', skipr=13):
 
@@ -58,6 +58,21 @@ class PriceDataOpener(GenDataOpener):
         return prices['수정시가'], prices['수정고가'], prices['수정주가'], prices['수정저가'] 
 
 class FinancialDataOpener(GenDataOpener):
+
+    def opener(self, sheetnames=['KSE', 'KDQ'], idx_name='Name',skipr=12):
+
+        file = {}
+        
+        for sheet_nm in sheetnames:
+            file[sheet_nm] = ((self.TS_dataopener(sheet_nm, idx_name, skipr))
+                                   .applymap(GenDataOpener.zerotonan)
+                                   .dropna(axis=0, how='all'))
+            file[sheet_nm].columns = ['Name', 'Period'] + list(self.PF_dataCols(sheet_nm, sk_rows=9)[2:])
+            file[sheet_nm] = file[sheet_nm].T.iloc[2:]
+
+        return file    
+
+    
 
     def rate_change(self, sheetname, num=1):
     
