@@ -13,6 +13,17 @@ import pandas as pd
 
 ## 변수: Sheet명 / 바꿀 컬럼 / Date
 
+"""
+파일 업뎃 시 Date 변수 뿐만 아니라
+
+다른 것도 고려
+
+Cross-Sectional Data / Time Series Data
+
+파일 타입에 따라(코드, 산업분류등)에 따라 조금씩 달라지겠구냥
+"""
+
+
 class Fileset:
 
     """
@@ -22,8 +33,6 @@ class Fileset:
         Sheets(시트명).Range("A1").Hyperlinks(1).Follow
     End Sub
     """    
-
-    @staticmethod
 
     def mkt_date_selector(st_date, ed_date):
 
@@ -65,38 +74,3 @@ class Fileset:
         
         wb.save(self.fullpath)
 
-# a = Fileset("price.xlsm")
-# a.update(20170101, 20181221)
-
-
-# class FileSet:
-
-
-
-#     def __init__(self, path=f"""D:\WiseData\Data""", file_name="test.xlsm"):
-        
-#         self.path = path
-#         self.file_name = file_name
-
-#     def file_open(self, st_date, ed_date):
-        
-#         wb=xl.Book(f"{self.path}\\{self.file_name}")
-#         # wb=xl.Book(f"{PATH}\\test.xlsm")
-#         sht=wb.sheets['sheet1']
-#         sht.range("B5").value = st_date
-#         sht.range("B6").value = ed_date
-
-#         mac = wb.macro("Refresh_NewButton")
-#         mac()
-
-#         wb.save(f"{self.path}\\{self.file_name}")
-        
-# a = FileSet()
-
-# a.file_open(20150101,20180130)
-# # PATH = f"""D:\WiseData\Data"""
-
-
-# ## Start Date / End Date 는 추후에 만지는 걸로
-
-# # print(sht.range("A1").value)
