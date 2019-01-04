@@ -2,6 +2,14 @@ import pandas as pd
 import numpy as np
 from datetime import datetime
 
+## QuantWise Data Type
+## Time Series
+## Peer Analysis
+
+## Save File as CSV for Further Analysis
+
+## Or DataFrame to sql upload
+
 class GenDataOpener:
 
     zerotonan = lambda x: np.nan if x == 0 else x
