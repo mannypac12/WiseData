@@ -1,18 +1,19 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from FileOpener.DataOpener.DataOpener import PriceDataOpener, StockInfoDataOpener, FinancialDataOpener
 
 ## DataOpener(Stuff): olhc Opener
 
 ## Data Opener General
 
-class PriceDataCleanser(PriceDataOpener):
+class PriceDataCleanser:
 
-    def __init__(self, file, dir='Data'):
-        
-        super().__init__(file, dir=dir)
-        self.open, self.high, self.close, self.low = super().olhc()
+    def __init__(self, open, low, high, close):
+
+        self.open = open
+        self.low = low
+        self.high = high
+        self.close = close
 
     def daily_price_rt(self):
 
@@ -192,6 +193,16 @@ class PriceDataCleanser(PriceDataOpener):
 
         return cond_1 & cond_2 & cond_3
 
+class FinancialDataCleanser:
+
+    ## FinancialDataCleanser
+    ## Bring the financial Data 
+    ## Then upload the stuff
+
+    def __init__(self, data):
+
+        self.data = data
+
 """
     Class DualMomentum
 
@@ -305,36 +316,3 @@ class PfAnalysis:
     def maxDrawDown(self, windows=252):
 
         return self.drawDown(windows).min()
-
-class Delisted:
-
-    def __init__(self, data):
-
-        self.data=data
-    
-    
-
-
-
-
-## 
-## 레알 상폐: Return should be 0
-## 합병주식: Return should be 1
-
-
-    ## Composit Return 
-    ## Maximum DrawDown
-    ##
-
-
-
-## 이격 공식 / 다른 클래스로 해서
-## m + 2*sd or - 2*sd 공식화하긔
-
-    ## 이격(%로 표시하기)
-    ## 이격 공식: 
-
-
-# objOne = PriceDataCleanser(file="price.xlsm")   
-# print(objOne.pocketPivot(10, 50,200,10,2).sum())
-

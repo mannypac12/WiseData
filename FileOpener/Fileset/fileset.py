@@ -1,76 +1,161 @@
 import xlwings as xl
 import pandas as pd
-## 1. 퀀티와이즈에서 받은 엑셀 파일 내 모듈에 매크로 함수를 작성한 다음 매크로 확장자로 저장
-## 2. 퀀티와이즈에 접속되어있는지 확인 후 해당 파이선을 돌림(cmd / python fileset.py)
-## 3. 변수: 일자는 yyyymmdd 형식으로 입력
-## 3. 변수: 일자는 yyyymmdd 형식으로 입력
-
-## 현재 날짜까지: CPD [20181220]
-
-## 해당 파이선 파일을 다른 곳에서 돌릴 수 있도록
-
-### Sheet에 대한 Update 해줘야 함 -> Sheet에 대한 Macro 작성 완료
-
-## 변수: Sheet명 / 바꿀 컬럼 / Date
-
-"""
-파일 업뎃 시 Date 변수 뿐만 아니라
-
-다른 것도 고려
-
-Cross-Sectional Data / Time Series Data
-
-파일 타입에 따라(코드, 산업분류등)에 따라 조금씩 달라지겠구냥
-"""
-
+import numpy as np
 
 class Fileset:
-
-    """
-    매크로지정 (해당 엑셀파일 모듈 내)
-    Public Sub Refresh_NewButton()
-        '시트명.버튼위치.Hyperlinks(1).Follow
-        Sheets(시트명).Range("A1").Hyperlinks(1).Follow
-    End Sub
-    """    
-
-    def mkt_date_selector(st_date, ed_date):
-
-        ## 12월 1일부터 3월 1일까지
-        ## 3월 1일보다 작은 것
-
-        date_as = pd.date_range(st_date, ed_date)
-
-        return date_as[date_as < ed_date][0], date_as[date_as < ed_date][-1]
-
-    ## 파일경로 / ## 파일명
 
     def __init__(self, file, path="Data"):
 
         self.path=path
         self.file=file
-        self.fullpath=f"""{path}\\{self.file}"""
-
-    ## 파일 Open
+        self.fullpath=f"""{path}/{self.file}"""
 
     def file_open(self):
         
         wb=xl.Book(self.fullpath)
         return wb
 
-    ## 변수 변경(날짜)
+class TimeSeriesFileset(Fileset):
 
-    def update(self, st_date, ed_date):
+    ## Frequency 
+    ## Period
+    @staticmethod
+    def column_creator(x):
+
+        ## x should be list object
+        if len(x) < 1:
+            raise Exception('length of list x should be more than 1')
+        else: 
+            return f"B8"
+
+    def clear_sheet(self, sheets):
+
+        for sheet in sheets:
+            sheets[sheet.name].range('B8:XFD9').value = None
+            sheets[sheet.name].range('A15').options(transpose=True).value = None
+        
+    def date_setting(self, sheets, st_date, ed_date, date_type):
+
+        for sheet in sheets:
+            sheets[sheet.name].range("B4").value = date_type
+            sheets[sheet.name].range("B5").value = st_date
+            sheets[sheet.name].range("B6").value = ed_date
+
+    def column_setting(self, sheets, secs):
+
+        ## XDF8 Hard Coding
+
+        rng_cols = TimeSeriesFileset.column_creator(secs)
+
+        for sheet in sheets:
+            sheets[sheet.name].range("B8:XFD8").value = None
+            sheets[sheet.name].range(rng_cols).value = secs
+
+    def full_update_sheet(self, st_date, ed_date, secs, date_type = 'd'):
+
+        ## 종목, Date 모두 업데이트
 
         wb = self.file_open()
         sheets = wb.sheets
-        
-        for sheet in sheets:
-            sheets[sheet.name].range("B5").value = st_date
-            sheets[sheet.name].range("B6").value = ed_date
+
+        self.clear_sheet(sheets)
+        self.date_setting(sheets, st_date, ed_date, date_type)
+        self.column_setting(sheets, secs)
 
         mac = wb.macro("Refresh_Button")
         mac()
         
         wb.save(self.fullpath)
 
+    def column_update_sheet(self, secs):
+
+        ## 종목 업데이트만 필요할 떄
+
+        wb = self.file_open()
+        sheets = wb.sheets
+
+        self.clear_sheet(sheets)
+        self.column_setting(sheets, secs)
+
+        mac = wb.macro("Refresh_Button")
+        mac()
+        
+        wb.save(self.fullpath)        
+
+    def frequency_update(self, st_date, ed_date, date_type='D'):
+
+        ## Date Change만 필요할 때
+
+        wb = self.file_open()
+        sheets = wb.sheets
+
+        self.clear_sheet(sheets)
+        self.date_setting(sheets, st_date, ed_date, date_type)
+
+        mac = wb.macro("Refresh_Button")
+        mac()
+        
+        wb.save(self.fullpath)
+
+class FinancialDataSet(Fileset):
+
+    ## C9: XFD10 = None
+    ## A14: A14
+
+    def clear_sheet(self, sheets, options=0):
+
+        if options == 0:
+
+            for sheet in sheets:
+                sheets[sheet.name].range('C9:XFD40000').value = None
+                sheets[sheet.name].range('A14:B40000').value = None
+        
+        elif options == 1:
+
+            for sheet in sheets:
+                sheets[sheet.name].range('C9:XFD40000').value = None
+
+        elif options == 2:
+
+            for sheet in sheets:
+                sheets[sheet.name].range('A14:B40000').value = None
+
+    def column_setting(self, sheets, account, period):
+
+        len_period = len(period)
+        rp_account = account.repeat(len_period)
+        
+        for sheet in sheets:
+            sheets[sheet.name].range("C9").value = rp_account
+            sheets[sheet.name].range("C10").value = period
+
+    def company_code(self, sheets, comp_code):
+
+        for sheet in sheets:
+            sheets[sheet.name].range(f"A14:A16").options(transpose=True).value = comp_code
+
+    def column_update(self, account, period, options=1):
+
+        wb = self.file_open()
+        sheets = wb.sheets
+
+        self.clear_sheet(sheets, options=options)
+        self.column_setting(sheets, account, period)
+
+        mac = wb.macro("Refresh_Button")
+        mac()
+        
+        wb.save(self.fullpath)
+
+    def company_update(self, account, period, options=2):
+
+        wb = self.file_open()
+        sheets = wb.sheets
+
+        self.clear_sheet(sheets, options=options)
+        self.company_code(account, period)
+
+        mac = wb.macro("Refresh_Button")
+        mac()
+        
+        wb.save(self.fullpath)
