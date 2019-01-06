@@ -189,9 +189,9 @@ class PriceDataCleanser:
         cond_1 = self.mva_inline(shorter, longer).shift(shift_amt)
         cond_2 = (self.candle() == True)
         cond_3 = self.close > self.SMPmovAvg(mt_cls)
-        cond_3 = self.SMPmovAvg(mt_cls) > self.SMPmovAvg(filter)
+        cond_4 = self.SMPmovAvg(mt_cls) > self.SMPmovAvg(filter)
 
-        return cond_1 & cond_2 & cond_3
+        return cond_1 & cond_2 & cond_3 & cond_4
 
 class FinancialDataCleanser:
 
