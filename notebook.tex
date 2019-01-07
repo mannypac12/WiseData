@@ -1,0 +1,730 @@
+
+% Default to the notebook output style
+
+    
+
+
+% Inherit from the specified cell style.
+
+
+
+
+    
+\documentclass[11pt]{article}
+
+    
+    
+    \usepackage[T1]{fontenc}
+    % Nicer default font (+ math font) than Computer Modern for most use cases
+    \usepackage{mathpazo}
+
+    % Basic figure setup, for now with no caption control since it's done
+    % automatically by Pandoc (which extracts ![](path) syntax from Markdown).
+    \usepackage{graphicx}
+    % We will generate all images so they have a width \maxwidth. This means
+    % that they will get their normal width if they fit onto the page, but
+    % are scaled down if they would overflow the margins.
+    \makeatletter
+    \def\maxwidth{\ifdim\Gin@nat@width>\linewidth\linewidth
+    \else\Gin@nat@width\fi}
+    \makeatother
+    \let\Oldincludegraphics\includegraphics
+    % Set max figure width to be 80% of text width, for now hardcoded.
+    \renewcommand{\includegraphics}[1]{\Oldincludegraphics[width=.8\maxwidth]{#1}}
+    % Ensure that by default, figures have no caption (until we provide a
+    % proper Figure object with a Caption API and a way to capture that
+    % in the conversion process - todo).
+    \usepackage{caption}
+    \DeclareCaptionLabelFormat{nolabel}{}
+    \captionsetup{labelformat=nolabel}
+
+    \usepackage{adjustbox} % Used to constrain images to a maximum size 
+    \usepackage{xcolor} % Allow colors to be defined
+    \usepackage{enumerate} % Needed for markdown enumerations to work
+    \usepackage{geometry} % Used to adjust the document margins
+    \usepackage{amsmath} % Equations
+    \usepackage{amssymb} % Equations
+    \usepackage{textcomp} % defines textquotesingle
+    % Hack from http://tex.stackexchange.com/a/47451/13684:
+    \AtBeginDocument{%
+        \def\PYZsq{\textquotesingle}% Upright quotes in Pygmentized code
+    }
+    \usepackage{upquote} % Upright quotes for verbatim code
+    \usepackage{eurosym} % defines \euro
+    \usepackage[mathletters]{ucs} % Extended unicode (utf-8) support
+    \usepackage[utf8x]{inputenc} % Allow utf-8 characters in the tex document
+    \usepackage{fancyvrb} % verbatim replacement that allows latex
+    \usepackage{grffile} % extends the file name processing of package graphics 
+                         % to support a larger range 
+    % The hyperref package gives us a pdf with properly built
+    % internal navigation ('pdf bookmarks' for the table of contents,
+    % internal cross-reference links, web links for URLs, etc.)
+    \usepackage{hyperref}
+    \usepackage{longtable} % longtable support required by pandoc >1.10
+    \usepackage{booktabs}  % table support for pandoc > 1.12.2
+    \usepackage[inline]{enumitem} % IRkernel/repr support (it uses the enumerate* environment)
+    \usepackage[normalem]{ulem} % ulem is needed to support strikethroughs (\sout)
+                                % normalem makes italics be italics, not underlines
+    
+
+    
+    
+    % Colors for the hyperref package
+    \definecolor{urlcolor}{rgb}{0,.145,.698}
+    \definecolor{linkcolor}{rgb}{.71,0.21,0.01}
+    \definecolor{citecolor}{rgb}{.12,.54,.11}
+
+    % ANSI colors
+    \definecolor{ansi-black}{HTML}{3E424D}
+    \definecolor{ansi-black-intense}{HTML}{282C36}
+    \definecolor{ansi-red}{HTML}{E75C58}
+    \definecolor{ansi-red-intense}{HTML}{B22B31}
+    \definecolor{ansi-green}{HTML}{00A250}
+    \definecolor{ansi-green-intense}{HTML}{007427}
+    \definecolor{ansi-yellow}{HTML}{DDB62B}
+    \definecolor{ansi-yellow-intense}{HTML}{B27D12}
+    \definecolor{ansi-blue}{HTML}{208FFB}
+    \definecolor{ansi-blue-intense}{HTML}{0065CA}
+    \definecolor{ansi-magenta}{HTML}{D160C4}
+    \definecolor{ansi-magenta-intense}{HTML}{A03196}
+    \definecolor{ansi-cyan}{HTML}{60C6C8}
+    \definecolor{ansi-cyan-intense}{HTML}{258F8F}
+    \definecolor{ansi-white}{HTML}{C5C1B4}
+    \definecolor{ansi-white-intense}{HTML}{A1A6B2}
+
+    % commands and environments needed by pandoc snippets
+    % extracted from the output of `pandoc -s`
+    \providecommand{\tightlist}{%
+      \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+    \DefineVerbatimEnvironment{Highlighting}{Verbatim}{commandchars=\\\{\}}
+    % Add ',fontsize=\small' for more characters per line
+    \newenvironment{Shaded}{}{}
+    \newcommand{\KeywordTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\DataTypeTok}[1]{\textcolor[rgb]{0.56,0.13,0.00}{{#1}}}
+    \newcommand{\DecValTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\BaseNTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\FloatTok}[1]{\textcolor[rgb]{0.25,0.63,0.44}{{#1}}}
+    \newcommand{\CharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\StringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\CommentTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textit{{#1}}}}
+    \newcommand{\OtherTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{{#1}}}
+    \newcommand{\AlertTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\FunctionTok}[1]{\textcolor[rgb]{0.02,0.16,0.49}{{#1}}}
+    \newcommand{\RegionMarkerTok}[1]{{#1}}
+    \newcommand{\ErrorTok}[1]{\textcolor[rgb]{1.00,0.00,0.00}{\textbf{{#1}}}}
+    \newcommand{\NormalTok}[1]{{#1}}
+    
+    % Additional commands for more recent versions of Pandoc
+    \newcommand{\ConstantTok}[1]{\textcolor[rgb]{0.53,0.00,0.00}{{#1}}}
+    \newcommand{\SpecialCharTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\VerbatimStringTok}[1]{\textcolor[rgb]{0.25,0.44,0.63}{{#1}}}
+    \newcommand{\SpecialStringTok}[1]{\textcolor[rgb]{0.73,0.40,0.53}{{#1}}}
+    \newcommand{\ImportTok}[1]{{#1}}
+    \newcommand{\DocumentationTok}[1]{\textcolor[rgb]{0.73,0.13,0.13}{\textit{{#1}}}}
+    \newcommand{\AnnotationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\CommentVarTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\VariableTok}[1]{\textcolor[rgb]{0.10,0.09,0.49}{{#1}}}
+    \newcommand{\ControlFlowTok}[1]{\textcolor[rgb]{0.00,0.44,0.13}{\textbf{{#1}}}}
+    \newcommand{\OperatorTok}[1]{\textcolor[rgb]{0.40,0.40,0.40}{{#1}}}
+    \newcommand{\BuiltInTok}[1]{{#1}}
+    \newcommand{\ExtensionTok}[1]{{#1}}
+    \newcommand{\PreprocessorTok}[1]{\textcolor[rgb]{0.74,0.48,0.00}{{#1}}}
+    \newcommand{\AttributeTok}[1]{\textcolor[rgb]{0.49,0.56,0.16}{{#1}}}
+    \newcommand{\InformationTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    \newcommand{\WarningTok}[1]{\textcolor[rgb]{0.38,0.63,0.69}{\textbf{\textit{{#1}}}}}
+    
+    
+    % Define a nice break command that doesn't care if a line doesn't already
+    % exist.
+    \def\br{\hspace*{\fill} \\* }
+    % Math Jax compatability definitions
+    \def\gt{>}
+    \def\lt{<}
+    % Document parameters
+    \title{KOSPI\_MINUS\_NET\_INCOME}
+    
+    
+    
+
+    % Pygments definitions
+    
+\makeatletter
+\def\PY@reset{\let\PY@it=\relax \let\PY@bf=\relax%
+    \let\PY@ul=\relax \let\PY@tc=\relax%
+    \let\PY@bc=\relax \let\PY@ff=\relax}
+\def\PY@tok#1{\csname PY@tok@#1\endcsname}
+\def\PY@toks#1+{\ifx\relax#1\empty\else%
+    \PY@tok{#1}\expandafter\PY@toks\fi}
+\def\PY@do#1{\PY@bc{\PY@tc{\PY@ul{%
+    \PY@it{\PY@bf{\PY@ff{#1}}}}}}}
+\def\PY#1#2{\PY@reset\PY@toks#1+\relax+\PY@do{#2}}
+
+\expandafter\def\csname PY@tok@w\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.73,0.73}{##1}}}
+\expandafter\def\csname PY@tok@c\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.74,0.48,0.00}{##1}}}
+\expandafter\def\csname PY@tok@k\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kt\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.69,0.00,0.25}{##1}}}
+\expandafter\def\csname PY@tok@o\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@ow\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\expandafter\def\csname PY@tok@nb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nf\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@nc\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@nn\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@ne\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.82,0.25,0.23}{##1}}}
+\expandafter\def\csname PY@tok@nv\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@no\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.53,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nl\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.63,0.63,0.00}{##1}}}
+\expandafter\def\csname PY@tok@ni\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.60,0.60,0.60}{##1}}}
+\expandafter\def\csname PY@tok@na\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.49,0.56,0.16}{##1}}}
+\expandafter\def\csname PY@tok@nt\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@nd\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.67,0.13,1.00}{##1}}}
+\expandafter\def\csname PY@tok@s\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sd\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@si\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\expandafter\def\csname PY@tok@se\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sr\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.40,0.53}{##1}}}
+\expandafter\def\csname PY@tok@ss\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@sx\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@m\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@gh\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@gu\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.50,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@gd\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.63,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@gi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.63,0.00}{##1}}}
+\expandafter\def\csname PY@tok@gr\endcsname{\def\PY@tc##1{\textcolor[rgb]{1.00,0.00,0.00}{##1}}}
+\expandafter\def\csname PY@tok@ge\endcsname{\let\PY@it=\textit}
+\expandafter\def\csname PY@tok@gs\endcsname{\let\PY@bf=\textbf}
+\expandafter\def\csname PY@tok@gp\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,0.50}{##1}}}
+\expandafter\def\csname PY@tok@go\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.53,0.53,0.53}{##1}}}
+\expandafter\def\csname PY@tok@gt\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.27,0.87}{##1}}}
+\expandafter\def\csname PY@tok@err\endcsname{\def\PY@bc##1{\setlength{\fboxsep}{0pt}\fcolorbox[rgb]{1.00,0.00,0.00}{1,1,1}{\strut ##1}}}
+\expandafter\def\csname PY@tok@kc\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kd\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kn\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@kr\endcsname{\let\PY@bf=\textbf\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@bp\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.50,0.00}{##1}}}
+\expandafter\def\csname PY@tok@fm\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.00,0.00,1.00}{##1}}}
+\expandafter\def\csname PY@tok@vc\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@vg\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@vi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@vm\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.10,0.09,0.49}{##1}}}
+\expandafter\def\csname PY@tok@sa\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sc\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@dl\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@s2\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@sh\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@s1\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.73,0.13,0.13}{##1}}}
+\expandafter\def\csname PY@tok@mb\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mf\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mh\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mi\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@il\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@mo\endcsname{\def\PY@tc##1{\textcolor[rgb]{0.40,0.40,0.40}{##1}}}
+\expandafter\def\csname PY@tok@ch\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cm\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cpf\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@c1\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+\expandafter\def\csname PY@tok@cs\endcsname{\let\PY@it=\textit\def\PY@tc##1{\textcolor[rgb]{0.25,0.50,0.50}{##1}}}
+
+\def\PYZbs{\char`\\}
+\def\PYZus{\char`\_}
+\def\PYZob{\char`\{}
+\def\PYZcb{\char`\}}
+\def\PYZca{\char`\^}
+\def\PYZam{\char`\&}
+\def\PYZlt{\char`\<}
+\def\PYZgt{\char`\>}
+\def\PYZsh{\char`\#}
+\def\PYZpc{\char`\%}
+\def\PYZdl{\char`\$}
+\def\PYZhy{\char`\-}
+\def\PYZsq{\char`\'}
+\def\PYZdq{\char`\"}
+\def\PYZti{\char`\~}
+% for compatibility with earlier versions
+\def\PYZat{@}
+\def\PYZlb{[}
+\def\PYZrb{]}
+\makeatother
+
+
+    % Exact colors from NB
+    \definecolor{incolor}{rgb}{0.0, 0.0, 0.5}
+    \definecolor{outcolor}{rgb}{0.545, 0.0, 0.0}
+
+
+
+    
+    % Prevent overflowing lines due to hard-to-break entities
+    \sloppy 
+    % Setup hyperref package
+    \hypersetup{
+      breaklinks=true,  % so long urls are correctly broken across lines
+      colorlinks=true,
+      urlcolor=urlcolor,
+      linkcolor=linkcolor,
+      citecolor=citecolor,
+      }
+    % Slightly bigger margins than the latex defaults
+    
+    \geometry{verbose,tmargin=1in,bmargin=1in,lmargin=1in,rmargin=1in}
+    
+    
+
+    \begin{document}
+    
+    
+    \maketitle
+    
+    
+
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}66}]:} \PY{k+kn}{import} \PY{n+nn}{pandas} \PY{k}{as} \PY{n+nn}{pd}
+         \PY{k+kn}{from} \PY{n+nn}{pandas}\PY{n+nn}{.}\PY{n+nn}{tseries}\PY{n+nn}{.}\PY{n+nn}{offsets} \PY{k}{import} \PY{n}{MonthEnd}
+         \PY{k+kn}{from} \PY{n+nn}{FileOpener}\PY{n+nn}{.}\PY{n+nn}{CSVReader}\PY{n+nn}{.}\PY{n+nn}{CSVReader} \PY{k}{import} \PY{n}{CSVReader} \PY{k}{as} \PY{n}{csv}
+         \PY{k+kn}{import} \PY{n+nn}{numpy} \PY{k}{as} \PY{n+nn}{np}
+         \PY{k+kn}{import} \PY{n+nn}{matplotlib} 
+         
+         \PY{o}{\PYZpc{}}\PY{k}{matplotlib} inline
+\end{Verbatim}
+
+
+    \section{Bring the file}\label{bring-the-file}
+
+\subsection{Price Data}\label{price-data}
+
+\subsubsection{코스피}\label{uxcf54uxc2a4uxd53c}
+
+-\/- 00.07.01 \textasciitilde{} 18.12.31 \#\#\# 당기순익(분기) -\/-
+00.1Q \textasciitilde{} 18.3Q
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}73}]:} \PY{n}{prc\PYZus{}dir} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{CSVFile/Price/Korea/Stocks}\PY{l+s+s1}{\PYZsq{}}
+         \PY{n}{fin\PYZus{}dir} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{CSVFile/FinancialData/Korea}\PY{l+s+s1}{\PYZsq{}}
+         
+         \PY{n}{price\PYZus{}data} \PY{o}{=} \PY{n}{csv}\PY{o}{.}\PY{n}{price\PYZus{}reader}\PY{p}{(}\PY{n}{filename} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{KOSPI\PYZus{}FROM\PYZus{}1998\PYZus{}close.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{directory} \PY{o}{=} \PY{n}{prc\PYZus{}dir}\PY{p}{)}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{2000\PYZhy{}07\PYZhy{}01}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{2018\PYZhy{}12\PYZhy{}31}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+         \PY{n}{fin\PYZus{}data} \PY{o}{=} \PY{n}{csv}\PY{o}{.}\PY{n}{financial\PYZus{}reader}\PY{p}{(}\PY{n}{filename} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{NET\PYZus{}INCOME\PYZus{}KSE.csv}\PY{l+s+s1}{\PYZsq{}}\PY{p}{,} \PY{n}{directory} \PY{o}{=} \PY{n}{fin\PYZus{}dir}\PY{p}{)}
+\end{Verbatim}
+
+
+    \subsubsection{가격 데이터
+개괄}\label{uxac00uxaca9-uxb370uxc774uxd130-uxac1cuxad04}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}74}]:} \PY{n+nb}{print}\PY{p}{(}\PY{n}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{코스피 내 거래종목: }\PY{l+s+si}{\PYZob{}price\PYZus{}data.shape[1]\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+         \PY{n+nb}{print}\PY{p}{(}\PY{n}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{총 거래일수: }\PY{l+s+si}{\PYZob{}price\PYZus{}data.shape[0]\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+코스피 내 거래종목: 1192
+총 거래일수: 4569
+
+    \end{Verbatim}
+
+    \subsubsection{재무 데이터
+개괄}\label{uxc7acuxbb34-uxb370uxc774uxd130-uxac1cuxad04}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}75}]:} \PY{n+nb}{print}\PY{p}{(}\PY{n}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{코스피 내 거래종목: }\PY{l+s+si}{\PYZob{}fin\PYZus{}data.shape[1]\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+         \PY{n+nb}{print}\PY{p}{(}\PY{n}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{총 분기: }\PY{l+s+si}{\PYZob{}fin\PYZus{}data.shape[0]\PYZcb{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+코스피 내 거래종목: 1192
+총 분기: 75
+
+    \end{Verbatim}
+
+    \section{데이터 조정}\label{uxb370uxc774uxd130-uxc870uxc815}
+
+    \subsection{재무 데이터
+조정}\label{uxc7acuxbb34-uxb370uxc774uxd130-uxc870uxc815}
+
+\subsubsection{Look Back Bias 방지를 위해 당분기 데이터를 다음분기
+데이터로
+조정}\label{look-back-bias-uxbc29uxc9c0uxb97c-uxc704uxd574-uxb2f9uxbd84uxae30-uxb370uxc774uxd130uxb97c-uxb2e4uxc74cuxbd84uxae30-uxb370uxc774uxd130uxb85c-uxc870uxc815}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}76}]:} \PY{n}{net\PYZus{}income} \PY{o}{=} \PY{n}{fin\PYZus{}data}\PY{o}{.}\PY{n}{shift}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{)}\PY{o}{.}\PY{n}{dropna}\PY{p}{(}\PY{n}{axis} \PY{o}{=} \PY{l+m+mi}{0}\PY{p}{,} \PY{n}{how} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{all}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+
+
+    \subsection{당기순익 적자 / 흑자
+구분}\label{uxb2f9uxae30uxc21cuxc775-uxc801uxc790-uxd751uxc790-uxad6cuxbd84}
+
+\subsubsection{만약 데이터가 NaN 값인 경우는 NaN 값으로 반환 해주어야
+함}\label{uxb9ccuxc57d-uxb370uxc774uxd130uxac00-nan-uxac12uxc778-uxacbduxc6b0uxb294-nan-uxac12uxc73cuxb85c-uxbc18uxd658-uxd574uxc8fcuxc5b4uxc57c-uxd568}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}77}]:} \PY{k}{def} \PY{n+nf}{plus\PYZus{}to\PYZus{}nan}\PY{p}{(}\PY{n}{x}\PY{p}{)}\PY{p}{:}
+             
+             \PY{k}{if} \PY{n}{x} \PY{o}{\PYZlt{}} \PY{l+m+mi}{0}\PY{p}{:} 
+                 \PY{k}{return} \PY{k+kc}{False}
+             \PY{k}{elif} \PY{n}{x} \PY{o}{\PYZgt{}}\PY{o}{=} \PY{l+m+mi}{0}\PY{p}{:} 
+                 \PY{k}{return} \PY{k+kc}{True}
+             \PY{k}{else}\PY{p}{:}
+                 \PY{k}{return} \PY{n}{np}\PY{o}{.}\PY{n}{nan}
+         
+         \PY{n}{net\PYZus{}income\PYZus{}plus} \PY{o}{=} \PY{n}{net\PYZus{}income}\PY{o}{.}\PY{n}{applymap}\PY{p}{(}\PY{n}{plus\PYZus{}to\PYZus{}nan}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}78}]:} \PY{n}{net\PYZus{}income\PYZus{}plus}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+
+
+\begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}78}]:}             A000010 A000020  A000030  A000040  A000050 A000060 A000070  \textbackslash{}
+         Code                                                                     
+         2000-06-30     True     NaN     True    False     True     NaN     NaN   
+         2000-09-30    False    True    False    False    False     NaN     NaN   
+         2000-12-31     True    True    False    False     True     NaN    True   
+         2001-03-31    False    True    False    False    False   False    True   
+         2001-06-30     True    True     True     True     True    True    True   
+         
+                    A000080  A000090  A000100   {\ldots}     A298050  A298690  A300720  \textbackslash{}
+         Code                                   {\ldots}                                 
+         2000-06-30     NaN      NaN     True   {\ldots}         NaN      NaN      NaN   
+         2000-09-30     NaN      NaN     True   {\ldots}         NaN      NaN      NaN   
+         2000-12-31     NaN      NaN     True   {\ldots}         NaN      NaN      NaN   
+         2001-03-31   False      NaN     True   {\ldots}         NaN      NaN      NaN   
+         2001-06-30   False      NaN     True   {\ldots}         NaN      NaN      NaN   
+         
+                     A306200  A900030  A900050  A900140 A950010 A950070  A950100  
+         Code                                                                     
+         2000-06-30      NaN      NaN      NaN      NaN     NaN     NaN      NaN  
+         2000-09-30      NaN      NaN      NaN      NaN     NaN     NaN      NaN  
+         2000-12-31      NaN      NaN      NaN      NaN     NaN     NaN      NaN  
+         2001-03-31      NaN      NaN      NaN      NaN     NaN     NaN      NaN  
+         2001-06-30      NaN      NaN      NaN      NaN     NaN     NaN      NaN  
+         
+         [5 rows x 1192 columns]
+\end{Verbatim}
+            
+    \subsection{수익률 산출}\label{uxc218uxc775uxb960-uxc0b0uxcd9c}
+
+\subsubsection{수익률 계산시 극단값
+조정}\label{uxc218uxc775uxb960-uxacc4uxc0b0uxc2dc-uxadf9uxb2e8uxac12-uxc870uxc815}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}79}]:} \PY{n}{price\PYZus{}rt} \PY{o}{=} \PY{n}{price\PYZus{}data}\PY{o}{.}\PY{n}{pct\PYZus{}change}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{dropna}\PY{p}{(}\PY{n}{axis} \PY{o}{=} \PY{l+m+mi}{0}\PY{p}{,} \PY{n}{how} \PY{o}{=} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{all}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}80}]:} \PY{p}{(}\PY{p}{(}\PY{n}{price\PYZus{}rt} \PY{o}{\PYZgt{}} \PY{l+m+mf}{0.3}\PY{p}{)}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)}\PY{p}{)}\PY{o}{.}\PY{n}{sum}\PY{p}{(}\PY{p}{)} 
+\end{Verbatim}
+
+
+\begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}80}]:} 367
+\end{Verbatim}
+            
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}81}]:} \PY{n}{price\PYZus{}rt}\PY{p}{[}\PY{n}{price\PYZus{}rt} \PY{o}{\PYZgt{}} \PY{l+m+mf}{0.3}\PY{p}{]} \PY{o}{=} \PY{l+m+mf}{0.3}
+\end{Verbatim}
+
+
+    \subsection{주식 유니버스
+선정}\label{uxc8fcuxc2dd-uxc720uxb2c8uxbc84uxc2a4-uxc120uxc815}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}82}]:} \PY{c+c1}{\PYZsh{}\PYZsh{} Universe}
+         \PY{n}{none\PYZus{}invest} \PY{o}{=} \PY{n}{net\PYZus{}income\PYZus{}plus}\PY{o}{.}\PY{n}{isnull}\PY{p}{(}\PY{p}{)}
+         \PY{n}{plus\PYZus{}invest} \PY{o}{=} \PY{n}{net\PYZus{}income\PYZus{}plus} \PY{o}{==} \PY{k+kc}{True}
+         \PY{n}{minus\PYZus{}invest} \PY{o}{=} \PY{p}{(}\PY{n}{net\PYZus{}income\PYZus{}plus} \PY{o}{==} \PY{k+kc}{False}\PY{p}{)} \PY{o}{\PYZam{}} \PY{o}{\PYZti{}}\PY{n}{none\PYZus{}invest}
+\end{Verbatim}
+
+
+    \subsection{당기순익 적자}\label{uxb2f9uxae30uxc21cuxc775-uxc801uxc790}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}85}]:} \PY{n}{minus\PYZus{}invest}\PY{o}{.}\PY{n}{head}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+
+
+\begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}85}]:}             A000010  A000020  A000030  A000040  A000050  A000060  A000070  \textbackslash{}
+         Code                                                                        
+         2000-06-30    False    False    False     True    False    False    False   
+         2000-09-30     True    False     True     True     True    False    False   
+         2000-12-31    False    False     True     True    False    False    False   
+         2001-03-31     True    False     True     True     True     True    False   
+         2001-06-30    False    False    False    False    False    False    False   
+         
+                     A000080  A000090  A000100   {\ldots}     A298050  A298690  A300720  \textbackslash{}
+         Code                                    {\ldots}                                 
+         2000-06-30    False    False    False   {\ldots}       False    False    False   
+         2000-09-30    False    False    False   {\ldots}       False    False    False   
+         2000-12-31    False    False    False   {\ldots}       False    False    False   
+         2001-03-31     True    False    False   {\ldots}       False    False    False   
+         2001-06-30     True    False    False   {\ldots}       False    False    False   
+         
+                     A306200  A900030  A900050  A900140  A950010  A950070  A950100  
+         Code                                                                       
+         2000-06-30    False    False    False    False    False    False    False  
+         2000-09-30    False    False    False    False    False    False    False  
+         2000-12-31    False    False    False    False    False    False    False  
+         2001-03-31    False    False    False    False    False    False    False  
+         2001-06-30    False    False    False    False    False    False    False  
+         
+         [5 rows x 1192 columns]
+\end{Verbatim}
+            
+    \subsection{각 분기별 해당 종목
+산출}\label{uxac01-uxbd84uxae30uxbcc4-uxd574uxb2f9-uxc885uxbaa9-uxc0b0uxcd9c}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}86}]:} \PY{n}{minus\PYZus{}data} \PY{o}{=} \PY{p}{\PYZob{}}\PY{p}{\PYZcb{}}
+         \PY{n}{date\PYZus{}index} \PY{o}{=} \PY{n}{minus\PYZus{}invest}\PY{o}{.}\PY{n}{index}
+         
+         \PY{k}{for} \PY{n}{date} \PY{o+ow}{in} \PY{n}{date\PYZus{}index}\PY{p}{:}
+         
+             \PY{n}{minus\PYZus{}data}\PY{p}{[}\PY{n}{date}\PY{p}{]} \PY{o}{=} \PY{p}{(}\PY{n}{minus\PYZus{}invest}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{date}\PY{p}{]}\PY{p}{[}\PY{n}{minus\PYZus{}invest}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{date}\PY{p}{]} \PY{o}{==} \PY{k+kc}{True}\PY{p}{]}\PY{p}{)}\PY{o}{.}\PY{n}{index}
+\end{Verbatim}
+
+
+    \subsection{해당 종목 동일가중 포트폴리오의 Composit Return
+계산}\label{uxd574uxb2f9-uxc885uxbaa9-uxb3d9uxc77cuxac00uxc911-uxd3ecuxd2b8uxd3f4uxb9acuxc624uxc758-composit-return-uxacc4uxc0b0}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}87}]:} \PY{c+c1}{\PYZsh{}\PYZsh{} Quartarly Change}
+         
+         \PY{c+c1}{\PYZsh{}\PYZsh{} invest Date}
+         \PY{n}{lag\PYZus{}invest\PYZus{}dates} \PY{o}{=} \PY{n+nb}{list}\PY{p}{(}\PY{n}{minus\PYZus{}data}\PY{o}{.}\PY{n}{keys}\PY{p}{(}\PY{p}{)}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{:}\PY{p}{]}
+         \PY{n}{invest\PYZus{}dates} \PY{o}{=} \PY{n+nb}{list}\PY{p}{(}\PY{n}{minus\PYZus{}data}\PY{o}{.}\PY{n}{keys}\PY{p}{(}\PY{p}{)}\PY{p}{)}\PY{p}{[}\PY{p}{:}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}
+         
+         \PY{n}{ret\PYZus{}data} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{Series}\PY{p}{(}\PY{p}{)}
+         
+         \PY{k}{for} \PY{n}{cur\PYZus{}date}\PY{p}{,} \PY{n}{lag\PYZus{}date} \PY{o+ow}{in} \PY{n+nb}{zip}\PY{p}{(}\PY{n}{invest\PYZus{}dates}\PY{p}{,} \PY{n}{lag\PYZus{}invest\PYZus{}dates}\PY{p}{)}\PY{p}{:}
+             
+             \PY{n}{ret\PYZus{}data} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{concat}\PY{p}{(}\PY{p}{[}\PY{n}{ret\PYZus{}data}\PY{p}{,} \PY{p}{(}\PY{n}{price\PYZus{}rt}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{cur\PYZus{}date}\PY{p}{:}\PY{n}{lag\PYZus{}date}\PY{p}{]}\PY{p}{[}\PY{n}{minus\PYZus{}data}\PY{p}{[}\PY{n}{cur\PYZus{}date}\PY{p}{]}\PY{p}{]}\PY{p}{)}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{axis} \PY{o}{=} \PY{l+m+mi}{1}\PY{p}{,} \PY{n}{skipna}\PY{o}{=}\PY{k+kc}{True}\PY{p}{)}\PY{p}{]}\PY{p}{)}
+\end{Verbatim}
+
+
+    \subsection{상폐 종목의
+예시}\label{uxc0c1uxd3d0-uxc885uxbaa9uxc758-uxc608uxc2dc}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}56}]:} \PY{n}{price\PYZus{}rt}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{A000280}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{2001\PYZhy{}06\PYZhy{}01}\PY{l+s+s1}{\PYZsq{}}\PY{p}{:}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{2001\PYZhy{}06\PYZhy{}07}\PY{l+s+s1}{\PYZsq{}}\PY{p}{]}
+\end{Verbatim}
+
+
+\begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}56}]:} D A T E
+         2001-06-01   -0.473684
+         2001-06-04   -0.300000
+         2001-06-05   -0.142857
+         2001-06-07    0.000000
+         Name: A000280, dtype: float64
+\end{Verbatim}
+            
+    \subsection{성과평가}\label{uxc131uxacfcuxd3c9uxac00}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}138}]:} \PY{k+kn}{from} \PY{n+nn}{pf\PYZus{}anlysis} \PY{k}{import} \PY{n}{PfAnalysis} \PY{k}{as} \PY{n}{pf}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}139}]:} \PY{n}{net\PYZus{}minus\PYZus{}rt} \PY{o}{=} \PY{n}{pf}\PY{p}{(}\PY{n}{ret\PYZus{}data}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}128}]:} \PY{n}{net\PYZus{}minus\PYZus{}rt}\PY{o}{.}\PY{n}{cumReturn}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{sub}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{)}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+
+
+\begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}128}]:} <matplotlib.axes.\_subplots.AxesSubplot at 0x2a9a0343f98>
+\end{Verbatim}
+            
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_30_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}144}]:} \PY{n}{net\PYZus{}minus\PYZus{}rt}\PY{o}{.}\PY{n}{data}\PY{o}{.}\PY{n}{resample}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{A}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{o}{.}\PY{n}{prod}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{sub}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{)}\PY{o}{.}\PY{n}{apply}\PY{p}{(}\PY{k}{lambda} \PY{n}{x}\PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+si}{\PYZob{}:.2\PYZpc{}\PYZcb{}}\PY{l+s+s1}{\PYZsq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n}{x}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+
+
+\begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}144}]:} 2000-12-31     -4.00\%
+          2001-12-31     24.63\%
+          2002-12-31    -39.01\%
+          2003-12-31    -16.01\%
+          2004-12-31     -1.54\%
+          2005-12-31    114.13\%
+          2006-12-31      1.27\%
+          2007-12-31     22.77\%
+          2008-12-31    -51.33\%
+          2009-12-31     42.66\%
+          2010-12-31     -7.88\%
+          2011-12-31    -13.21\%
+          2012-12-31     -8.25\%
+          2013-12-31     -3.04\%
+          2014-12-31      5.75\%
+          2015-12-31     38.57\%
+          2016-12-31     -1.39\%
+          2017-12-31     -4.69\%
+          2018-12-31     15.11\%
+          Freq: A-DEC, dtype: object
+\end{Verbatim}
+            
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}149}]:} \PY{n+nb}{print}\PY{p}{(}\PY{n}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{MDD in One Year is }\PY{l+s+s2}{\PYZob{}}\PY{l+s+s2}{abs(round(net\PYZus{}minus\PYZus{}rt.maxDrawDown()*100, 2))\PYZcb{}}\PY{l+s+s2}{\PYZpc{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+MDD in One Year is 64.49\%
+
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}161}]:} \PY{n+nb}{print}\PY{p}{(}\PY{n}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Total Cummlative Return is }\PY{l+s+s2}{\PYZob{}}\PY{l+s+s2}{abs(round((net\PYZus{}minus\PYZus{}rt.data.prod() \PYZhy{} 1) * 100, 2))\PYZcb{}}\PY{l+s+s2}{\PYZpc{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Total Cummlative Return is 25.76\%
+
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}171}]:} \PY{n+nb}{print}\PY{p}{(}\PY{n}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{CAGR is }\PY{l+s+s2}{\PYZob{}}\PY{l+s+s2}{abs(round((net\PYZus{}minus\PYZus{}rt.data.prod() ** (1/17.5)\PYZhy{}1) * 100, 2))\PYZcb{}}\PY{l+s+s2}{\PYZpc{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+CAGR is 1.32\%
+
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}167}]:} \PY{p}{(}\PY{p}{)}\PY{n}{net\PYZus{}minus\PYZus{}rt}\PY{o}{.}\PY{n}{data}\PY{o}{.}\PY{n}{prod}\PY{p}{(}\PY{p}{)} \PY{o}{*}\PY{o}{*} \PY{p}{(}\PY{l+m+mi}{1}\PY{o}{/}\PY{l+m+mf}{17.5}\PY{p}{)}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}
+\end{Verbatim}
+
+
+\begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}167}]:} 0.013181732819095737
+\end{Verbatim}
+            
+    \subsection{당기순익 흑자
+기업}\label{uxb2f9uxae30uxc21cuxc775-uxd751uxc790-uxae30uxc5c5}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}151}]:} \PY{n}{plus\PYZus{}data} \PY{o}{=} \PY{p}{\PYZob{}}\PY{p}{\PYZcb{}}
+          \PY{n}{date\PYZus{}index} \PY{o}{=} \PY{n}{plus\PYZus{}invest}\PY{o}{.}\PY{n}{index}
+          
+          \PY{k}{for} \PY{n}{date} \PY{o+ow}{in} \PY{n}{date\PYZus{}index}\PY{p}{:}
+          
+              \PY{n}{plus\PYZus{}data}\PY{p}{[}\PY{n}{date}\PY{p}{]} \PY{o}{=} \PY{p}{(}\PY{n}{plus\PYZus{}invest}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{date}\PY{p}{]}\PY{p}{[}\PY{n}{plus\PYZus{}invest}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{date}\PY{p}{]} \PY{o}{==} \PY{k+kc}{True}\PY{p}{]}\PY{p}{)}\PY{o}{.}\PY{n}{index}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}152}]:} \PY{c+c1}{\PYZsh{}\PYZsh{} Quartarly Change}
+          
+          \PY{c+c1}{\PYZsh{}\PYZsh{} invest Date}
+          \PY{n}{lag\PYZus{}invest\PYZus{}dates} \PY{o}{=} \PY{n+nb}{list}\PY{p}{(}\PY{n}{plus\PYZus{}data}\PY{o}{.}\PY{n}{keys}\PY{p}{(}\PY{p}{)}\PY{p}{)}\PY{p}{[}\PY{l+m+mi}{1}\PY{p}{:}\PY{p}{]}
+          \PY{n}{invest\PYZus{}dates} \PY{o}{=} \PY{n+nb}{list}\PY{p}{(}\PY{n}{plus\PYZus{}data}\PY{o}{.}\PY{n}{keys}\PY{p}{(}\PY{p}{)}\PY{p}{)}\PY{p}{[}\PY{p}{:}\PY{o}{\PYZhy{}}\PY{l+m+mi}{1}\PY{p}{]}
+          
+          \PY{n}{plus\PYZus{}ret\PYZus{}data} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{Series}\PY{p}{(}\PY{p}{)}
+          
+          \PY{k}{for} \PY{n}{cur\PYZus{}date}\PY{p}{,} \PY{n}{lag\PYZus{}date} \PY{o+ow}{in} \PY{n+nb}{zip}\PY{p}{(}\PY{n}{invest\PYZus{}dates}\PY{p}{,} \PY{n}{lag\PYZus{}invest\PYZus{}dates}\PY{p}{)}\PY{p}{:}
+              
+              \PY{n}{plus\PYZus{}ret\PYZus{}data} \PY{o}{=} \PY{n}{pd}\PY{o}{.}\PY{n}{concat}\PY{p}{(}\PY{p}{[}\PY{n}{plus\PYZus{}ret\PYZus{}data}\PY{p}{,} \PY{p}{(}\PY{n}{price\PYZus{}rt}\PY{o}{.}\PY{n}{loc}\PY{p}{[}\PY{n}{cur\PYZus{}date}\PY{p}{:}\PY{n}{lag\PYZus{}date}\PY{p}{]}\PY{p}{[}\PY{n}{plus\PYZus{}data}\PY{p}{[}\PY{n}{cur\PYZus{}date}\PY{p}{]}\PY{p}{]}\PY{p}{)}\PY{o}{.}\PY{n}{mean}\PY{p}{(}\PY{n}{axis} \PY{o}{=} \PY{l+m+mi}{1}\PY{p}{)}\PY{p}{]}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}155}]:} \PY{n}{net\PYZus{}plus\PYZus{}rt} \PY{o}{=} \PY{n}{pf}\PY{p}{(}\PY{n}{plus\PYZus{}ret\PYZus{}data}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}156}]:} \PY{n}{net\PYZus{}plus\PYZus{}rt}\PY{o}{.}\PY{n}{cumReturn}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{sub}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{)}\PY{o}{.}\PY{n}{plot}\PY{p}{(}\PY{p}{)}
+\end{Verbatim}
+
+
+\begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}156}]:} <matplotlib.axes.\_subplots.AxesSubplot at 0x2a9a02242b0>
+\end{Verbatim}
+            
+    \begin{center}
+    \adjustimage{max size={0.9\linewidth}{0.9\paperheight}}{output_40_1.png}
+    \end{center}
+    { \hspace*{\fill} \\}
+    
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}157}]:} \PY{p}{(}\PY{n}{net\PYZus{}plus\PYZus{}rt}\PY{o}{.}\PY{n}{data}\PY{o}{.}\PY{n}{resample}\PY{p}{(}\PY{l+s+s1}{\PYZsq{}}\PY{l+s+s1}{A}\PY{l+s+s1}{\PYZsq{}}\PY{p}{)}\PY{o}{.}\PY{n}{prod}\PY{p}{(}\PY{p}{)}\PY{o}{.}\PY{n}{sub}\PY{p}{(}\PY{l+m+mi}{1}\PY{p}{)}\PY{p}{)}\PY{o}{.}\PY{n}{apply}\PY{p}{(}\PY{k}{lambda} \PY{n}{x}\PY{p}{:} \PY{l+s+s1}{\PYZsq{}}\PY{l+s+si}{\PYZob{}:.2\PYZpc{}\PYZcb{}}\PY{l+s+s1}{\PYZsq{}}\PY{o}{.}\PY{n}{format}\PY{p}{(}\PY{n}{x}\PY{p}{)}\PY{p}{)}
+\end{Verbatim}
+
+
+\begin{Verbatim}[commandchars=\\\{\}]
+{\color{outcolor}Out[{\color{outcolor}157}]:} 2000-12-31    -18.68\%
+          2001-12-31     67.01\%
+          2002-12-31     -6.26\%
+          2003-12-31     19.32\%
+          2004-12-31     20.80\%
+          2005-12-31    118.13\%
+          2006-12-31     13.34\%
+          2007-12-31     48.38\%
+          2008-12-31    -37.76\%
+          2009-12-31     61.30\%
+          2010-12-31     24.39\%
+          2011-12-31      0.76\%
+          2012-12-31     13.54\%
+          2013-12-31     13.18\%
+          2014-12-31     18.52\%
+          2015-12-31     26.28\%
+          2016-12-31      1.87\%
+          2017-12-31      7.28\%
+          2018-12-31      6.59\%
+          Freq: A-DEC, dtype: object
+\end{Verbatim}
+            
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}158}]:} \PY{n+nb}{print}\PY{p}{(}\PY{n}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{MDD in One Year is }\PY{l+s+s2}{\PYZob{}}\PY{l+s+s2}{abs(round(net\PYZus{}plus\PYZus{}rt.maxDrawDown()*100, 2))\PYZcb{}}\PY{l+s+s2}{\PYZpc{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+MDD in One Year is 55.96\%
+
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}162}]:} \PY{n+nb}{print}\PY{p}{(}\PY{n}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{Total Cummlative Return is }\PY{l+s+s2}{\PYZob{}}\PY{l+s+s2}{abs(round((net\PYZus{}plus\PYZus{}rt.data.prod() \PYZhy{} 1) * 100, 2))\PYZcb{}}\PY{l+s+s2}{\PYZpc{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+Total Cummlative Return is 1797.96\%
+
+    \end{Verbatim}
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+{\color{incolor}In [{\color{incolor}172}]:} \PY{n+nb}{print}\PY{p}{(}\PY{n}{f}\PY{l+s+s2}{\PYZdq{}}\PY{l+s+s2}{CAGR is }\PY{l+s+s2}{\PYZob{}}\PY{l+s+s2}{abs(round((net\PYZus{}plus\PYZus{}rt.data.prod() ** (1/17.5)\PYZhy{}1) * 100, 2))\PYZcb{}}\PY{l+s+s2}{\PYZpc{}}\PY{l+s+s2}{\PYZdq{}}\PY{p}{)}
+\end{Verbatim}
+
+
+    \begin{Verbatim}[commandchars=\\\{\}]
+CAGR is 18.32\%
+
+    \end{Verbatim}
+
+
+    % Add a bibliography block to the postdoc
+    
+    
+    
+    \end{document}
