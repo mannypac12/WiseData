@@ -71,6 +71,8 @@ class BasicDualMomentum(PriceDataCleanser):
             
         return ansDt
 
+        
+
 """
 백테스트 전용 클래스 만들어보기
 """    
