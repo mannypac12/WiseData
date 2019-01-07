@@ -101,5 +101,7 @@ def priceUploader(excel_filename, upload_filename, dir, st_date, ed_date):
         temp = pd.concat([temp, price], axis = 0)
         temp.to_csv(f"{dir}/{upload_filename}_{price_type}.csv")
 
-FinancialCSVSaver('KSE_KDQ_DEBT.xlsm').saver('DEBT', 'CSVFile/FinancialData/Korea')
-FinancialCSVSaver('KSE_KDQ_TOTAL_ASSET.xlsm').saver('ASSET', 'CSVFile/FinancialData/Korea')
+# FinancialCSVSaver('KSE_KDQ_DEBT.xlsm').saver('DEBT', 'CSVFile/FinancialData/Korea')
+# FinancialCSVSaver('KSE_KDQ_TOTAL_ASSET.xlsm').saver('ASSET', 'CSVFile/FinancialData/Korea')
+
+FinancialCSVSaver('KOSDAQ_KOSPI_NET_INCOME.xlsm').saver('NET_INCOME', 'CSVFile/FinancialData/Korea')
