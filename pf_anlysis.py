@@ -34,4 +34,4 @@ class PfAnalysis:
 
     def freqReturn(self, freq = 'A'):
 
-        return self.data.resample(freq).prod()
+        return self.data.resample(freq).prod().sub(1)
