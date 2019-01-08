@@ -102,5 +102,4 @@ def priceUploader(excel_filename, upload_filename, dir, st_date, ed_date):
         temp.to_csv(f"{dir}/{upload_filename}_{price_type}.csv")
 
 
-FinancialCSVSaver('KOSDAQ_KOSPI_CUR_ASSET.xlsm').saver('CUR_ASSET', 'CSVFile/FinancialData/Korea')
-FinancialCSVSaver('KOSDAQ_KOSPI_CUR_DEBT.xlsm').saver('CUR_DEBT', 'CSVFile/FinancialData/Korea')
+FinancialCSVSaver('KOSDAQ_KOSPI_ISSUE_STOCK.xlsm').saver('ISSUE_STOCK', 'CSVFile/FinancialData/Korea')
