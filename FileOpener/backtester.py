@@ -61,7 +61,6 @@ class FinancialBacktest:
         
         return ret_data
 
-
 class PfAnalysis:
     
     def __init__(self, data):
@@ -83,16 +82,18 @@ class PfAnalysis:
         days = 1 if dayobj.days > 15 else 0
 
         return ret ** (1/ (year + (month+days)/12)) - 1
-        
-        ## Date 무시
-        ## Month 갔다쓰고 
-        ## Day 15 기준 if 15이하 Then 0 15 이상 1
-
-        pass
 
     def cumReturn(self):
 
         return self.data.cumprod()
+
+    def rolling_return(self, day=252):
+
+        return self.data.rolling(day).apply(lambda x: np.prod(x))
+
+    def rolling_return_max(self, day=252):
+
+        return self.rolling_return(day).max()
 
     ## Volatility
 
@@ -113,6 +114,10 @@ class PfAnalysis:
         return self.drawDown(windows).min()
 
     ## Freq Return Should be fixed
+
+    def maxGain(self, windows=252):
+
+        return self.drawDown(windows).max()
 
     def freqReturn(self, freq = 'A'):
 
