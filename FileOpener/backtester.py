@@ -66,6 +66,7 @@ class PfAnalysis:
     def __init__(self, data):
 
         self.data = data.sub(-1)
+        self.data[self.data > 1.3] = 1.3
         # self.index = data.index
 
     def totalReturn(self):
