@@ -9,6 +9,7 @@ directory = 'CSVFile/Price/Korea/Stocks'
 kse_file = 'KOSPI_FROM_1998_close.csv'
 kdq_file = 'KOSDAQ_FROM_1998_close.csv'
 
+<<<<<<< HEAD
 kse_price = csv.price_reader(kse_file, directory)
 kdq_price = csv.price_reader(kdq_file, directory)
 
@@ -33,4 +34,9 @@ print(rolling_return(kse_rt))
 #         pool.close()
 #         pool.join()        
         
+=======
+
+
+# test = pd.read_csv(f"{directory}/{filename}", skiprows = 1)
+>>>>>>> 952f0fb223632885a9d1572cb61184dbac5502e5
 
