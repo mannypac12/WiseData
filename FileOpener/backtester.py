@@ -16,6 +16,39 @@ class FinancialBacktest:
 
         self.price = price
 
+    """
+    Screen Method Start
+    """
+    ## Remove or Remain Deficit
+    @staticmethod
+    def screen_deficit(screen, option=True):
+
+        if option == True:
+            return screen[screen < 0]
+        elif option == False:
+            return screen[screen > 0]
+
+    @staticmethod
+    def screen_rank(screen, perc=10):
+
+        ## perc: Percentile
+
+        rank = screen.rank(axis=1, pct=True, ascending=False)
+        
+        for i in range(0, perc):
+
+            n_1 = (i+1) / perc
+            n = i / perc 
+            rank[(n < rank) & (rank < n_1)] = n_1 * perc 
+
+        return rank
+
+    ## Devide the stocks with Large / Small / End
+
+    """
+    Screen Method End
+    """
+
     def ret(self):
 
         ret = self.price.div(self.price.shift(1)) 
@@ -42,6 +75,7 @@ class FinancialBacktest:
             stock_data[idx] = (screen.loc[idx][(screen.loc[idx] == True) & (stock_listed.loc[idx] == False)]).index
 
         return stock_data
+
     
     def back_date(self, screen, freq = 'Q'):
 
