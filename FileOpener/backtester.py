@@ -253,11 +253,6 @@ class Plot:
         return fig, ax
 
 
-        
-
-
-        
-
     ## Bar Graph 그릴려면
         ## sns
 
