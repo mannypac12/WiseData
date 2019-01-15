@@ -104,8 +104,5 @@ def priceUploader(excel_filename, upload_filename, dir, st_date, ed_date):
         temp.to_csv(f"{dir}/{upload_filename}_{price_type}.csv")
 
 
-<<<<<<< HEAD
-FinancialCSVSaver('KOSDAQ_KOSPI_EBITDA.xlsm').saver('EBITDA', 'CSVFile/FinancialData/Korea')
-=======
-MarketCapSaver('KOSDAQ_KOSPI_VOLUME.xlsm').saver('VOLUME', 'CSVFile/Volume/Korea/Stock')
->>>>>>> 952f0fb223632885a9d1572cb61184dbac5502e5
+
+FinancialCSVSaver('KOSDAQ_KOSPI_DIV_PER.xlsx').saver('DIV_PER', 'CSVFile/FinancialData/Korea')
