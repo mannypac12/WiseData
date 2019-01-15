@@ -6,13 +6,15 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import seaborn as sns
 
+mpl.rcParams['axes.unicode_minus'] = False
+mpl.rcParams["font.family"] = 'NanumGothic'
+mpl.rcParams["font.size"] = 20
+mpl.rcParams["figure.figsize"] = (14,4)
+
 ## Universe 종목
 
 ## Dates
-
-
-
-class FinancialBacktest:
+class PriceCleaner:
 
     def __init__(self, price):
 
@@ -20,14 +22,179 @@ class FinancialBacktest:
 
     def ret(self):
 
-        ret = self.price.div(self.price.shift(1)) 
+        return self.price.div(self.price.shift(1))
+
+    def ret_cleaner(self):
+
+        ret = self.ret()
 
         ret.loc[:'1998-05-23'][ret.loc[:'1998-05-23'] > 1.08] = 1.08
         ret.loc['1998-05-25':'2005-03-25'][ret.loc['1998-05-25':'2005-03-25'] > 1.12] = 1.12
         ret.loc['2005-03-28':'2015-06-14'][ret.loc['2005-03-28':'2015-06-14'] > 1.15] = 1.15
-        ret.loc['2015-06-15':][ret.loc['2015-06-15':] > 1.3] = 1.3       
+        ret.loc['2015-06-15':][ret.loc['2015-06-15':] > 1.3] = 1.3  
 
         return ret.dropna(axis=0, how='all')
+
+    ## Return Cleaner 1.08 / 1.12 / 1.15 / 1.30
+    ## DownSide는 변경 안 해줘도 됨
+
+class PriceBacktester(PriceCleaner):
+
+    # def __init__(self, price):
+
+    #     self.price = price
+
+    # def ret(self):
+
+    #     return self.price.div(self.price.shift(1))
+
+    def catch_signal(self, filter):
+
+        signal = {}
+
+        for key in filter.columns:
+
+            temp = filter[key][filter[key]==True].index
+
+            if len(temp) == 0: 
+                pass
+            else:
+                signal[key] = temp
+    
+        return signal
+
+    def hodling_backtest(self, filter, n=10):
+        
+        ## 신호 후 변경할 것
+        ## n: Days of Holding
+
+        ## Dictionary 해서 종목별로 매핑해보기
+
+        ret_data = self.ret_cleaner()
+        ret = []
+        signal = self.catch_signal(filter)
+
+        for key, value in signal.items():
+
+            for date in value:
+
+                from_date = date + relativedelta(days=1)
+                to_date = date + relativedelta(days=n)
+                ret.append((ret_data[key].loc[from_date:to_date]).prod())
+        
+        return np.array(ret)
+
+class PricePfAnalysis:
+
+    def __init__(self, ret):
+
+        self.ret = ret
+
+    ## 승률
+
+    def num_of_signal(self):
+
+        return self.ret.shape[0]
+
+    def win_rate(self):
+        
+        return (self.ret > 1).sum() / self.num_of_signal()
+
+    def mean_rt(self):
+
+        return (self.ret.mean()) - 1
+
+    def min_rt(self):
+
+        return (self.ret.min()) - 1
+
+    def max_rt(self):
+
+        return (self.ret.max()) - 1        
+
+    def med_rt(self):
+
+        return np.median(self.ret) - 1 
+
+    def pretty_print(self):
+
+        print("승률: ", '{:2.2%}'.format(self.win_rate()))
+        print("매매 신호: ", f"{self.num_of_signal()}회")
+        print("중위 수익률: " , '{:2.2%}'.format(self.med_rt()))
+        print("평균 수익률: " , '{:2.2%}'.format(self.mean_rt()))
+        print("최소 수익률: " , '{:2.2%}'.format(self.min_rt()))
+        print("최대 수익률: " , '{:2.2%}'.format(self.max_rt()))
+
+    ## Plot
+
+    def hist_plot(self):
+
+        mpl.rcParams['axes.unicode_minus'] = False
+        mpl.rcParams["font.family"] = 'NanumGothic'
+        mpl.rcParams["font.size"] = 20
+        mpl.rcParams["figure.figsize"] = (14,4)
+
+        fig, ax = plt.subplots()
+
+        ax.xaxis.set_major_formatter(mpl.ticker.FuncFormatter(lambda x, _: '{:,.0%}'.format(x)))
+
+        for spine in ['top', 'right']:
+            ax.spines[spine].set_color('none')
+
+        sns.distplot(self.ret - 1, ax = ax, color = '#727272')
+
+        return fig, ax
+
+class FinancialBacktest(PriceCleaner):
+
+    # def __init__(self, price):
+
+    #     self.price = price
+
+    """
+    Screen Method Start
+    """
+    ## Remove or Remain Deficit
+    @staticmethod
+    def screen_deficit(screen, option=True):
+
+        if option == True:
+            return screen[screen < 0]
+        elif option == False:
+            return screen[screen > 0]
+
+    @staticmethod
+    def screen_rank(screen, perc=10):
+
+        ## perc: Percentile
+
+        rank = screen.rank(axis=1, pct=True, ascending=False)
+        
+        for i in range(0, perc):
+
+            n_1 = (i+1) / perc
+            n = i / perc 
+            rank[(n < rank) & (rank < n_1)] = n_1 * perc 
+
+        return rank
+
+    ## Devide the stocks with Large / Small / End
+
+    """
+    Screen Method End
+    """
+
+    # def ret(self):
+
+    #     ret = self.price.div(self.price.shift(1)) 
+    #     cols = ret.columns
+
+    #     ret.loc[:'1998-05-23', cols][ret.loc[:'1998-05-23', cols] > 1.08] = 1.08
+    #     ret.loc['1998-05-25':'2005-03-25', cols][ret.loc['1998-05-25':'2005-03-25', cols] > 1.12] = 1.12
+    #     ret.loc['2005-03-28':'2015-06-14', cols][ret.loc['2005-03-28':'2015-06-14', cols] > 1.15] = 1.15
+    #     ret.loc['2015-06-15':, cols][ret.loc['2015-06-15':, cols] > 1.3] = 1.3  
+
+    #     return ret.dropna(axis=0, how='all')
 
     def listed_at_time(self, freq):
 
@@ -44,10 +211,10 @@ class FinancialBacktest:
             stock_data[idx] = (screen.loc[idx][(screen.loc[idx] == True) & (stock_listed.loc[idx] == False)]).index
 
         return stock_data
-    
+
     def back_date(self, screen, freq = 'Q'):
 
-        rt = self.ret()
+        rt = self.ret_cleaner()
         st_dt = screen.index[0]
         last_dt = rt.index[-1] + off.MonthEnd()
         fin_lt_dt = screen.index[-1]
@@ -61,7 +228,7 @@ class FinancialBacktest:
 
     def backtest(self, screen, freq_stock, freq_date='Q'):
 
-        rt = self.ret()
+        rt = self.ret_cleaner()
         norm_list, st_list, ed_list = self.back_date(screen, freq_date)
         stocks = self.stock_screen(screen, freq_stock)
         
@@ -244,8 +411,6 @@ class Plot:
 
     def FreqPlot(self, data, xy=['year', 'return']):
 
-        self.mpl_setup()        
-
         fig, ax = self.TimeSeries()
         adj_data = self.adjFreq(data,xy)
         sns.barplot(x=xy[0], y=xy[1], data=adj_data, color='#727272', ax = ax)
@@ -253,61 +418,3 @@ class Plot:
         ax.set_xlabel('')
 
         return fig, ax
-
-
-    ## Bar Graph 그릴려면
-        ## sns
-
-
-
-    
-
-
-        ## 일두의 힘!
-
-    
-
-        
-
-
-    ## Time
-
-        ## size
-
-    ## Bar
-
-    
-
-    
-
-    ## Cum Return Plot 
-
-    ## Freq Return Plot
-
-
-
-
-
-    
-
-        
-
-        
-
-        
-
-    
-
-        
-
-
-    
-
-    
-
-
-    
-
-
-
-        
