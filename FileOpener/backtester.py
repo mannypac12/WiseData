@@ -151,6 +151,17 @@ class FinancialBacktest(PriceCleaner):
 
     #     self.price = price
 
+    ## Financial Backtest! Make rules!
+        ## Use Quarterly Data
+            ## Shift(1) then mar 31 could be answer 
+            ## then resample('A-MAR').last()
+            ## Good
+
+    ## 비은행주 걸러내는 방법 생각해보긔 뀨
+
+    ## Rank 분석
+    ## 수익률 분석
+
     """
     Screen Method Start
     """
@@ -164,11 +175,11 @@ class FinancialBacktest(PriceCleaner):
             return screen[screen > 0]
 
     @staticmethod
-    def screen_rank(screen, perc=10):
+    def screen_rank(screen, perc=10, ascending=False):
 
         ## perc: Percentile
 
-        rank = screen.rank(axis=1, pct=True, ascending=False)
+        rank = screen.rank(axis=1, pct=True, ascending=ascending)
         
         for i in range(0, perc):
 
@@ -177,6 +188,8 @@ class FinancialBacktest(PriceCleaner):
             rank[(n < rank) & (rank < n_1)] = n_1 * perc 
 
         return rank
+
+    ## Rank Anysis
 
     ## Devide the stocks with Large / Small / End
 
@@ -354,11 +367,11 @@ class PfAnalysis:
 
     def rolling_max(self, n):
 
-        return self.rolling_return(n).max().sub(1)
+        return self.rolling_return(n).max()
 
     def rolling_min(self, n):
 
-        return self.rolling_return(n).min().sub(1)
+        return self.rolling_return(n).min()
 
     def rol_pretty_print(self):
 
@@ -373,6 +386,8 @@ class PfAnalysis:
 
 class Plot:
 
+    
+    ## Make Robust for the data frame Tier for CAGR
     ## fig, ax Constructor
 
     def __init__(self):
@@ -385,13 +400,11 @@ class Plot:
         mpl.rcParams['axes.unicode_minus'] = False
         mpl.rcParams["font.family"] = 'NanumGothic'
         mpl.rcParams["font.size"] = 20
-        mpl.rcParams["figure.figsize"] = (14,4)
+        mpl.rcParams["figure.figsize"] = (20,10)
 
     def TimeSeries(self):
 
         self.mpl_setup()
-
-        self.fig.set_size_inches((20, 10))
 
         for spine in ['top', 'right']:
             self.ax.spines[spine].set_color('none')

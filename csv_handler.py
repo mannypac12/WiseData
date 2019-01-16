@@ -105,4 +105,5 @@ def priceUploader(excel_filename, upload_filename, dir, st_date, ed_date):
 
 
 
-FinancialCSVSaver('KOSDAQ_KOSPI_DIV_PER.xlsx').saver('DIV_PER', 'CSVFile/FinancialData/Korea')
+# FinancialCSVSaver('KOSDAQ_KOSPI_RET_EARNING.xlsm').saver('RET_EARNING', 'CSVFile/FinancialData/Korea')
+FinancialCSVSaver('KOSDAQ_KOSPI_CASH.xlsm').saver('CASH', 'CSVFile/FinancialData/Korea')
