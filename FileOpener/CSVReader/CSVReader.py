@@ -18,7 +18,8 @@ class CSVReader:
         elif (data['Code'].str.contains('Q')).sum() > 0:
             for i in range(1,5):
                 data['Code'] = data['Code'].str.replace(f"Q{i}", f"-{i*3}-01")
-                data['Code'] = pd.to_datetime(data['Code']) + MonthEnd()
+            
+            data['Code'] = pd.to_datetime(data['Code']) + MonthEnd()
 
         else:
             data['Code'] = pd.to_datetime(data['Code'], format='%Y%m') + MonthEnd()
