@@ -6,10 +6,10 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-mpl.rcParams['axes.unicode_minus'] = False
-mpl.rcParams["font.family"] = 'NanumGothic'
-mpl.rcParams["font.size"] = 20
-mpl.rcParams["figure.figsize"] = (14,4)
+# mpl.rcParams['axes.unicode_minus'] = False
+# mpl.rcParams["font.family"] = 'NanumGothic'
+# mpl.rcParams["font.size"] = 20
+# mpl.rcParams["figure.figsize"] = (14,4)
 
 
 class BacktestReturn:
@@ -115,7 +115,6 @@ class Financial(BacktestReturn):
             tier[f"Tier {i}"] = self.backtest(rank == i, freq_stock, freq_date)
 
         return pd.DataFrame(tier)
-
 
 class PriceBacktester(BacktestReturn):
 
@@ -346,4 +345,4 @@ class PFAnalysis:
 
             sns.distplot(self.ret - 1, ax = self.ax, color = '#727272')
 
-            return self.fig, self.ax                                    
+            return self.fig, self.ax                                 
