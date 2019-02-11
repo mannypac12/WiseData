@@ -6,18 +6,14 @@ import matplotlib as mpl
 import matplotlib.pyplot as plt
 import seaborn as sns
 
-<<<<<<< HEAD
 mpl.rcParams['axes.unicode_minus'] = False
+## 글씨체 바꿀 것(KB국민체)
 mpl.rcParams["font.family"] = 'NanumGothic'
 mpl.rcParams["font.size"] = 20
 mpl.rcParams["figure.figsize"] = (14,4)
-=======
-# mpl.rcParams['axes.unicode_minus'] = False
-# mpl.rcParams["font.family"] = 'NanumGothic'
-# mpl.rcParams["font.size"] = 20
-# mpl.rcParams["figure.figsize"] = (14,4)
->>>>>>> 5e6fc9f91b442e82ba0e3aea33c75dbc703502e7
 
+
+## 가치팩트 PBR 등 만들 수 있는 로직(스마트 베타 참조) 사용해서 만들 것
 
 class BacktestReturn:
 
@@ -40,28 +36,24 @@ class BacktestReturn:
 
         return ret.dropna(axis=0, how='all')
 
-class Financial(BacktestReturn): 
+class Screan:
 
-    def __init__(self, price, screen):
-        super().__init__()
+    def __init__(self, screen):
+        
         self.screen = screen
 
-    ## Only One 
-    @staticmethod
-    def screen_deficit(option=True):
+    def screen_deficit(self, option=True):
 
         if option == True:
-            return screen[screen < 0]
+            return self.screen[self.screen < 0]
         elif option == False:
-            return screen[screen > 0]
-
-    ## With Tier
-    @staticmethod
-    def screen_rank(screen, perc=10, ascending=False):
+            return self.screen[self.screen > 0]
+    
+    def screen_rank(self, perc=10, ascending=False):
 
         ## perc: Percentile
 
-        rank = screen.rank(axis=1, pct=True, ascending=ascending)
+        rank = self.screen.rank(axis=1, pct=True, ascending=ascending)
         
         for i in range(0, perc):
 
@@ -69,7 +61,39 @@ class Financial(BacktestReturn):
             n = i / perc 
             rank[(n < rank) & (rank < n_1)] = n_1 * perc 
 
-        return rank    
+        return rank        
+
+class Financial(BacktestReturn): 
+
+    def __init__(self, price):
+        super().__init__(price)
+
+    ## self Deficit 지우기
+
+    ## Only One 
+    # @staticmethod
+    # def screen_deficit(screen, option=True):
+
+    #     if option == True:
+    #         return screen[screen < 0]
+    #     elif option == False:
+    #         return screen[screen > 0]
+
+    # ## With Tier
+    # @staticmethod
+    # def screen_rank(screen, perc=10, ascending=False):
+
+    #     ## perc: Percentile
+
+    #     rank = screen.rank(axis=1, pct=True, ascending=ascending)
+        
+    #     for i in range(0, perc):
+
+    #         n_1 = (i+1) / perc
+    #         n = i / perc 
+    #         rank[(n < rank) & (rank < n_1)] = n_1 * perc 
+
+    #     return rank    
 
     def listed_at_time(self, freq):
 
@@ -161,13 +185,14 @@ class PriceBacktester(BacktestReturn):
         
         return np.array(ret)
 
+## Plot 지우기
+
 class PFAnalysis:
 
+    ## Plot 클래스 지우고
+    ## fig, ax 는 각기 다른 클래스내 집어 넣고
+
     class Plot:
-
-        def __init__(self):
-
-            self.fig, self.ax = plt.subplots()
 
         def mpl_setup(self):
 
@@ -181,17 +206,21 @@ class PFAnalysis:
         def __init__(self, ret, st_date=None, ed_date=None):
 
             ## st_date / ed_date as 'YYYY-MM-DD' or 'YYYYMMDD'
-            if st_date = None:
+            if st_date == None:
                 self.st_date = ret.index[0]
             else: 
                 self.st_date = pd.to_datetime(st_date)
 
-            if ed_date = None: 
+            if ed_date == None: 
                 self.ed_date = ret.index[-1]
             else:
                 self.ed_date = pd.to_datetime(ed_date)
 
             self.ret = ret.loc[self.st_date:self.ed_date]
+
+        def cumReturn(self):
+
+            return self.ret.cumprod() - 1
 
         def totalReturn(self):
 
@@ -241,7 +270,7 @@ class PFAnalysis:
 
         def drawDown(self, windows=252):
             
-            cum_rt = self.cumReturn()
+            cum_rt = self.cumReturn().sub(-1)
             roll_max = (cum_rt).rolling(window=windows, min_periods=1).max()
             
             return (cum_rt).div(roll_max).sub(1)
@@ -269,9 +298,14 @@ class PFAnalysis:
 
             return pd.Series(index = ['총수익률', 'Arithmetic Mean Return', 'Geometric Mean Return',
                                       'Median Return', 'Vol.', 'Upside Vol.', 'Downside Vol.', 'MDD'],
-                             data = [self.totalReturn(), self.mean_return(freq), self.geo_mean_return(freq),
-                                    self.median_return(freq), self.volatility(), self.upordownvol(),
-                                    self.upordownvol(option=False), abs(self.maxDrawDown()))]).map('{: .2%}'.format)
+                             data = [self.totalReturn(), 
+                                     self.mean_return(freq), 
+                                     self.geo_mean_return(freq),
+                                     self.median_return(freq), 
+                                     self.volatility(), 
+                                     self.upordownvol(),
+                                     self.upordownvol(option=False), 
+                                     abs(self.maxDrawDown())]).map('{: .2%}'.format)
 
     class FinancePlot(Finance, Plot):
 
@@ -279,13 +313,15 @@ class PFAnalysis:
 
             self.mpl_setup()
 
+            fig, ax = plt.subplots()            
+
             for spine in ['top', 'right']:
-                self.ax.spines[spine].set_color('none')
+                ax.spines[spine].set_color('none')
 
-            self.ax.margins(x=0)
-            self.ax.yaxis.set_major_formatter(mpl.ticker.FuncFormatter(lambda y, _: '{:,.0%}'.format(y)))
+            ax.margins(x=0)
+            ax.yaxis.set_major_formatter(mpl.ticker.FuncFormatter(lambda y, _: '{:,.0%}'.format(y)))
 
-            return self.fig, self.ax
+            return fig, ax
 
         def cumReturn(self):
 
@@ -344,12 +380,14 @@ class PFAnalysis:
 
         def hist_plot(self):
 
+            fig, ax = plt.subplots()
+
             self.mpl_setup()
-            self.ax.xaxis.set_major_formatter(mpl.ticker.FuncFormatter(lambda x, _: '{:,.0%}'.format(x)))
+            ax.xaxis.set_major_formatter(mpl.ticker.FuncFormatter(lambda x, _: '{:,.0%}'.format(x)))
 
             for spine in ['top', 'right']:
-                self.ax.spines[spine].set_color('none')
+                ax.spines[spine].set_color('none')
 
-            sns.distplot(self.ret - 1, ax = self.ax, color = '#727272')
+            sns.distplot(self.ret - 1, ax = ax, color = '#727272')
 
-            return self.fig, self.ax                                 
+            return fig, ax                                 
