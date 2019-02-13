@@ -1,6 +1,6 @@
 import pandas as pd
 import numpy as np
-
+from new_backtest import BacktestReturn
 
 """
 1. 팩터에 필요한 Component 를 만드는 함수입니닷 뀨
@@ -15,7 +15,12 @@ class Factor:
         ## 지표 내 모든 항목의 z-score를 합한 후
         ## 합한 값을 바탕으로 z-score를 산출함
 
-    class size:
+    """
+    거래정지 구분 데이터 사용
+    주식 스크리닝 필요함.
+    """
+
+    class Size:
 
         def __init__(self, marketcap):
 
@@ -50,6 +55,64 @@ class Factor:
 
                 return dt
 
+    class Quality:
+
+        pass
+
+    class ReturnPrep:
+
+        def __init__(self, price):
+
+            self.price = price
+
+        def ret_creator(self):
+
+            return BacktestReturn(self.price).ret_cleaner()
+
+        def perd_return(self, freq = 'M'):
+
+            ## Period Return
+
+            return self.ret_creator().resample(freq).prod()
+
+            ## 기간수익률(월별 혹은 분기 or WhatEver)
+
+    class LowVol(ReturnPrep):
+
+
+        ## 월별 수익률 측정
+        ## 5년간 표준편차 (60회) Rolling
+
+        pass
+
+
     class Momentum:
 
-        def __init__(self, price, pershare):
+        class Relative(Prep):
+
+            pass
+
+        class Dual(Prep):
+
+            pass
+
+
+
+
+        class Relative:
+
+            def __init__(self, price):
+
+                self.price = price
+
+        class  DualMomentum:
+
+            def __init__(self, price):
+
+                self.price = price
+
+        def ret_creator(self):
+
+            ##
+
+            return
