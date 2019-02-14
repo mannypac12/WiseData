@@ -2,7 +2,7 @@ import pandas as pd
 import numpy as np
 from dateutil.relativedelta import relativedelta
 import pandas.tseries.offsets as off
-import matplotlib as mpl 
+import matplotlib as mpl
 import matplotlib.pyplot as plt
 import seaborn as sns
 
@@ -32,14 +32,14 @@ class BacktestReturn:
         ret.loc[:'1998-05-23'][ret.loc[:'1998-05-23'] > 1.08] = 1.08
         ret.loc['1998-05-25':'2005-03-25'][ret.loc['1998-05-25':'2005-03-25'] > 1.12] = 1.12
         ret.loc['2005-03-28':'2015-06-14'][ret.loc['2005-03-28':'2015-06-14'] > 1.15] = 1.15
-        ret.loc['2015-06-15':][ret.loc['2015-06-15':] > 1.3] = 1.3  
+        ret.loc['2015-06-15':][ret.loc['2015-06-15':] > 1.3] = 1.3
 
         return ret.dropna(axis=0, how='all')
 
 class Screan:
 
     def __init__(self, screen):
-        
+
         self.screen = screen
 
     def screen_deficit(self, option=True):
@@ -48,29 +48,29 @@ class Screan:
             return self.screen[self.screen < 0]
         elif option == False:
             return self.screen[self.screen > 0]
-    
+
     def screen_rank(self, perc=10, ascending=False):
 
         ## perc: Percentile
 
         rank = self.screen.rank(axis=1, pct=True, ascending=ascending)
-        
+
         for i in range(0, perc):
 
             n_1 = (i+1) / perc
-            n = i / perc 
-            rank[(n < rank) & (rank < n_1)] = n_1 * perc 
+            n = i / perc
+            rank[(n < rank) & (rank < n_1)] = n_1 * perc
 
-        return rank        
+        return rank
 
-class Financial(BacktestReturn): 
+class Financial(BacktestReturn):
 
     def __init__(self, price):
         super().__init__(price)
 
     ## self Deficit 지우기
 
-    ## Only One 
+    ## Only One
     # @staticmethod
     # def screen_deficit(screen, option=True):
 
@@ -86,14 +86,14 @@ class Financial(BacktestReturn):
     #     ## perc: Percentile
 
     #     rank = screen.rank(axis=1, pct=True, ascending=ascending)
-        
+
     #     for i in range(0, perc):
 
     #         n_1 = (i+1) / perc
-    #         n = i / perc 
-    #         rank[(n < rank) & (rank < n_1)] = n_1 * perc 
+    #         n = i / perc
+    #         rank[(n < rank) & (rank < n_1)] = n_1 * perc
 
-    #     return rank    
+    #     return rank
 
     def listed_at_time(self, freq):
 
@@ -106,7 +106,7 @@ class Financial(BacktestReturn):
         stock_listed = self.listed_at_time(freq)
 
         for idx in indices:
-            
+
             stock_data[idx] = (screen.loc[idx][(screen.loc[idx] == True) & (stock_listed.loc[idx] == False)]).index
 
         return stock_data
@@ -128,13 +128,13 @@ class Financial(BacktestReturn):
         rt = self.ret_cleaner()
         norm_list, st_list, ed_list = self.testing_date(screen, freq_date)
         stocks = self.stock_screen(screen, freq_stock)
-        
+
         ret_data = pd.Series()
 
         for n_start, start, end in zip(norm_list, st_list, ed_list):
 
             ret_data = pd.concat([ret_data, rt[stocks[n_start]].loc[start:end].mean(axis=1)])
-        
+
         return ret_data
 
     def tier_backtest(self, rank, freq_stock, freq_date='Q', n=10):
@@ -157,15 +157,15 @@ class PriceBacktester(BacktestReturn):
 
             temp = filter[key][filter[key]==True].index
 
-            if len(temp) == 0: 
+            if len(temp) == 0:
                 pass
             else:
                 signal[key] = temp
-    
+
         return signal
 
     def hodling_backtest(self, filter, n=10):
-        
+
         ## 신호 후 변경할 것
         ## n: Days of Holding
 
@@ -182,7 +182,7 @@ class PriceBacktester(BacktestReturn):
                 from_date = date + relativedelta(days=1)
                 to_date = date + relativedelta(days=n)
                 ret.append((ret_data[key].loc[from_date:to_date]).prod())
-        
+
         return np.array(ret)
 
 ## Plot 지우기
@@ -208,10 +208,10 @@ class PFAnalysis:
             ## st_date / ed_date as 'YYYY-MM-DD' or 'YYYYMMDD'
             if st_date == None:
                 self.st_date = ret.index[0]
-            else: 
+            else:
                 self.st_date = pd.to_datetime(st_date)
 
-            if ed_date == None: 
+            if ed_date == None:
                 self.ed_date = ret.index[-1]
             else:
                 self.ed_date = pd.to_datetime(ed_date)
@@ -224,7 +224,7 @@ class PFAnalysis:
 
         def totalReturn(self):
 
-            return self.ret.prod() - 1        
+            return self.ret.prod() - 1
 
         def freqReturn(self, freq = 'A'):
 
@@ -239,7 +239,7 @@ class PFAnalysis:
             return self.freqReturn(freq).mean()
 
         def geo_mean_return(self, freq = 'A'):
-            
+
             ret = self.freqReturn(freq)
 
             return np.power((ret.sub(-1)).prod(), 1/ret.shape[0]) - 1
@@ -260,7 +260,7 @@ class PFAnalysis:
 
             ret = self.ret
 
-            if option == True: 
+            if option == True:
                 ## Upside Deviation
                 return (ret[ret>1]).std() * np.sqrt(252)
 
@@ -269,10 +269,10 @@ class PFAnalysis:
                 return (ret[ret<1]).std() * np.sqrt(252)
 
         def drawDown(self, windows=252):
-            
+
             cum_rt = self.cumReturn().sub(-1)
             roll_max = (cum_rt).rolling(window=windows, min_periods=1).max()
-            
+
             return (cum_rt).div(roll_max).sub(1)
 
         def maxDrawDown(self, windows=252):
@@ -289,7 +289,7 @@ class PFAnalysis:
                                  self.median_return(freq).rename('Median Return'),
                                  self.volatility().rename('Vol.'),
                                  self.upordownvol().rename('Upside Vol.'),
-                                 self.upordownvol(option=False).rename('Downside Vol.'),                  
+                                 self.upordownvol(option=False).rename('Downside Vol.'),
                                  abs(self.maxDrawDown()).rename('MDD')]).applymap('{: .2%}'.format)
 
     class PfOneWay(Finance):
@@ -298,13 +298,13 @@ class PFAnalysis:
 
             return pd.Series(index = ['총수익률', 'Arithmetic Mean Return', 'Geometric Mean Return',
                                       'Median Return', 'Vol.', 'Upside Vol.', 'Downside Vol.', 'MDD'],
-                             data = [self.totalReturn(), 
-                                     self.mean_return(freq), 
+                             data = [self.totalReturn(),
+                                     self.mean_return(freq),
                                      self.geo_mean_return(freq),
-                                     self.median_return(freq), 
-                                     self.volatility(), 
+                                     self.median_return(freq),
+                                     self.volatility(),
                                      self.upordownvol(),
-                                     self.upordownvol(option=False), 
+                                     self.upordownvol(option=False),
                                      abs(self.maxDrawDown())]).map('{: .2%}'.format)
 
     class FinancePlot(Finance, Plot):
@@ -313,7 +313,7 @@ class PFAnalysis:
 
             self.mpl_setup()
 
-            fig, ax = plt.subplots()            
+            fig, ax = plt.subplots()
 
             for spine in ['top', 'right']:
                 ax.spines[spine].set_color('none')
@@ -325,7 +325,7 @@ class PFAnalysis:
 
         def cumReturn(self):
 
-            return self.ret.cumprod() - 1         
+            return self.ret.cumprod() - 1
 
         def CumReturn_Plot(self):
 
@@ -333,7 +333,7 @@ class PFAnalysis:
             self.cumReturn().plot(ax=ax)
 
             return fig, ax
- 
+
     class Price:
 
         def __init__(self, ret):
@@ -345,7 +345,7 @@ class PFAnalysis:
             return self.ret.shape[0]
 
         def win_rate(self):
-            
+
             return (self.ret > 1).sum() / self.num_of_signal()
 
         def mean_rt(self):
@@ -358,11 +358,11 @@ class PFAnalysis:
 
         def max_rt(self):
 
-            return (self.ret.max()) - 1        
+            return (self.ret.max()) - 1
 
         def med_rt(self):
 
-            return np.median(self.ret) - 1 
+            return np.median(self.ret) - 1
 
     class PfPrice(Price):
 
@@ -370,10 +370,10 @@ class PFAnalysis:
 
             return pd.Series(index = ['승률', '매매신호', '중위수익률', '평균수익률', '최소수익률'],
                              data = ['{:2.2%}'.format(self.win_rate()),
-                                     f"{self.num_of_signal()}회", 
+                                     f"{self.num_of_signal()}회",
                                      '{:2.2%}'.format(self.med_rt()),
-                                     '{:2.2%}'.format(self.mean_rt()), 
-                                     '{:2.2%}'.format(self.min_rt()), 
+                                     '{:2.2%}'.format(self.mean_rt()),
+                                     '{:2.2%}'.format(self.min_rt()),
                                      '{:2.2%}'.format(self.max_rt())])
 
     class PricePlot(Price, Plot):
@@ -390,4 +390,4 @@ class PFAnalysis:
 
             sns.distplot(self.ret - 1, ax = ax, color = '#727272')
 
-            return fig, ax                                 
+            return fig, ax

@@ -79,7 +79,6 @@ class Factor:
 
     class LowVol(ReturnPrep):
 
-
         ## 월별 수익률 측정
         ## 5년간 표준편차 (60회) Rolling
 
